@@ -1,4 +1,25 @@
 {
-  "name": "port",
-  "packageManager": "yarn@4.10.3"
+  "name": "portfolio",
+  "private": true,
+  "packageManager": "yarn@4.10.3",
+  "workspaces": [
+    "backend",
+    "frontend/apps/*",
+    "frontend/common-ui/*",
+    "frontend/libs/*"
+  ],
+  "scripts": {
+    "dev:backend": "yarn workspace backend dev",
+    "dev:frontend": "yarn workspace portfolio-ui dev",
+    "build:portfolio-ui": "yarn workspace portfolio-ui build",
+    "preview:portfolio-ui": "yarn workspace portfolio-ui preview"
+  },
+  "installConfig": {
+    "pnp": true
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.0",
+    "@yarnpkg/esbuild-plugin-pnp": "^3.0.0-rc.15",
+    "vite": "^7.2.1"
+  }
 }

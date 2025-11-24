@@ -1,0 +1,27 @@
+{
+  "name": "@common-ui/app-provider",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.js",
+  "types": "src/index.js",
+  "lint-staged": {
+    "*.{json,js,jsx,css}": [
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@libs/api": "workspace:*",
+    "@mui/icons-material": "^5.16.7",
+    "@mui/material": "^5.16.7",
+    "framer-motion": "^10.12.16",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  }
+}
