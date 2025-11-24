@@ -82,7 +82,7 @@ const Contact = ({ contact, socialLinks }) => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <Grid container spacing={4} alignItems="flex-start" sx={{ p: 2, width: "80%" }}>
+        <Grid container spacing={4} alignItems="flex-start" sx={{ p: 2, width: '95%' }}>
           <Grid item xs={12}>
             {/* Section Header */}
             <motion.div variants={itemVariants}>

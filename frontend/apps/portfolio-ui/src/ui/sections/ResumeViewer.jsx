@@ -118,7 +118,7 @@ const ResumeViewer = ({ socialLinks }) => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
         >
-            <Grid container spacing={6} sx={{ width: "80%" }}>
+            <Grid container spacing={6} sx={{ width: '95%' }}>
                 {/* Resume Viewer Card */}
                 <Grid item xs={12}>
                     <Paper

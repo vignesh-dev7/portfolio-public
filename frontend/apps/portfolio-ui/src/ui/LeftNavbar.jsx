@@ -20,8 +20,8 @@ const navItems = [
   { label: "About", path: "/about", icon: <PersonIcon/> },
   { label: "Skills", path: "/skills", icon:  <PsychologyIcon/> },
   { label: "Projects", path: "/projects", icon: <FolderOpenOutlinedIcon/> },
-  { label: "Contact", path: "/contact", icon: <MailOutlineIcon/> },
   { label: "Resume Viewer", path: "/resumeViewer", icon: <TextSnippetIcon/> },
+  { label: "Contact", path: "/contact", icon: <MailOutlineIcon/> },
 ];
 
 export default function LeftNavbar() {
@@ -34,8 +34,7 @@ export default function LeftNavbar() {
       textDecoration: "none",
       display: "block",
       fontWeight: 500,
-      padding: "10px 14px",
-      borderRadius: "12px",
+      borderRadius: "0px",
       position: "relative",
       transition: "all 0.3s ease",
     }),
@@ -45,7 +44,7 @@ export default function LeftNavbar() {
   return (
     <Box
       sx={{
-        width: 260,
+        width: "100%",
         height: "100%",
         p: 2,
         display: "flex",
@@ -82,12 +81,12 @@ export default function LeftNavbar() {
       </Typography>
 
       {/* Navigation Links */}
-      <Stack spacing={1.2} sx={{ width: "100%" }}>
+      <Stack spacing={1} sx={{ width: "100%", px: 1 }}>
         {navItems.map((item) => {
           const activeColor = isDark ? "#38BDF8" : "#0284C7";
           const hoverBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
           const activeBg = isDark
-            ? "rgba(56, 189, 248, 0.12)"
+            ? "rgba(56, 189, 248, 0.15)"
             : "rgba(56, 189, 248, 0.15)";
 
           return (
@@ -98,73 +97,100 @@ export default function LeftNavbar() {
                 ...navItemStyle,
                 color: isActive ? activeColor : theme.palette.text.primary,
                 backgroundColor: isActive ? activeBg : "transparent",
-                boxShadow: isActive ? `inset 2px 0 ${activeColor}` : "none",
               })}
             >
-              <motion.div
-                whileHover={{
-                  scale: 1.08,
-                  x: 6,
-                  transition: { type: "spring", stiffness: 280 },
-                }}
-                style={{
-                  borderRadius: "12px",
-                  overflow: "hidden",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1.2,
-                    px: 1.5,
-                    py: 0.8,
-
+              {({ isActive }) => (
+                <motion.div
+                  whileHover={!isActive ? {
+                    scale: 1.08,
+                    x: 3,
+                    transition: { type: "spring", stiffness: 280/* , damping: 20 */ },
+                  } : {}}
+                  style={{
                     borderRadius: "12px",
-                    cursor: "pointer",
-
-                    "&:hover": {
-                      backgroundColor: hoverBg,
-                      color: activeColor,
-                      transition: "0.25s ease",
-                    },
                   }}
                 >
-                  {/* Icon */}
-                  {item.icon && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                      px: 2,
+                      py: 1.2,
+                      borderRadius: "0px",
+                      position: "relative",
+                      
+                      ...(isActive && {
+                        "&::before": {
+                          content: '""',
+                          position: "absolute",
+                          left: 0,
+                          top: 0,   
+                          bottom: 0,
+                          width: "3px",
+                          height: "100%",
+                          backgroundColor: activeColor,
+                          borderRadius: "0px 0px 0px 0px",
+                        }
+                      }),
+
+                      // Hover effect ONLY for non-active items
+                      ...(!isActive && {
+                        cursor: "pointer",
+                        "&:hover": {
+                          backgroundColor: hoverBg,
+                          color: activeColor,
+                          transition: "all 0.25s ease",
+                        },
+                      }),
+                    }}
+                  >
+                    {/* Icon */}
                     <Box
                       sx={{
-                        fontSize: "18px",
+                        fontSize: "20px",
                         display: "flex",
                         alignItems: "center",
+                        minWidth: "24px",
                       }}
                     >
                       {item.icon}
                     </Box>
-                  )}
 
-                  {/* Label */}
-                  <Box sx={{ fontWeight: 500 }}>{item.label}</Box>
-                </Box>
-              </motion.div>
+                    {/* Label */}
+                    <Typography 
+                      sx={{ 
+                        fontWeight: isActive ? 600 : 500,
+                        fontSize: "0.95rem",
+                        transition: "font-weight 0.2s ease",
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                  </Box>
+                </motion.div>
+              )}
             </NavLink>
           );
         })}
       </Stack>
 
       {/* Footer */}
-      <Box sx={{ width: "110%", textAlign: "center", mt: "auto" }}>
+      <Box sx={{ width: "100%", textAlign: "center", mt: "auto", pt: 2, mr: 0 }}>
         <Divider
           sx={{
-            my: 2,
-            mr: 1,
+            mb: 2,
+            mr: 4,
             borderColor: theme.palette.divider,
             opacity: 0.6,
           }}
         />
         <Typography
           variant="caption"
-          sx={{ color: theme.palette.text.secondary, mr: 2 }}
+          sx={{ 
+            color: theme.palette.text.secondary,
+            fontSize: "0.75rem",
+          }}
         >
           Developed by Vignesh P © {new Date().getFullYear()}
         </Typography>

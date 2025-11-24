@@ -94,7 +94,7 @@ const About = ({ about, socialLinks, contact }) => {
       >
         <Grid container spacing={4} alignItems="flex-start" p={2}>
           {/* About Content */}
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12} md={11} lg={10}>
 
             {/* Name & Role */}
             <motion.div variants={itemVariants}>
@@ -164,9 +164,12 @@ const About = ({ about, socialLinks, contact }) => {
                             ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.15)} 0%, ${alpha(theme.palette.primary.dark, 0.25)} 100%)`
                             : `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
                           border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+                          backdropFilter: "blur(12px)",        // ⬅ blurred glass
+                          WebkitBackdropFilter: "blur(12px)",
                           transition: 'border-color 0.3s ease',
                           '&:hover': {
-                            borderColor: theme.palette.primary.main
+                            borderColor: theme.palette.primary.main,
+                            boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.15)}`
                           }
                         }}
                       >
@@ -207,8 +210,11 @@ const About = ({ about, socialLinks, contact }) => {
                           : `linear-gradient(135deg, ${alpha(theme.palette.secondary.light, 0.2)} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 100%)`,
                         border: `1px solid ${alpha(theme.palette.secondary.main, 0.3)}`,
                         transition: 'border-color 0.3s ease',
+                        backdropFilter: "blur(12px)",        // ⬅ blurred glass
+                        WebkitBackdropFilter: "blur(12px)",
                         '&:hover': {
-                          borderColor: theme.palette.secondary.main
+                          borderColor: theme.palette.secondary.main,
+                          boxShadow: `0 8px 24px ${alpha(theme.palette.secondary.main, 0.15)}`
                         }
                       }}
                     >
@@ -248,8 +254,11 @@ const About = ({ about, socialLinks, contact }) => {
                           : `linear-gradient(135deg, ${alpha(theme.palette.success.light, 0.2)} 0%, ${alpha(theme.palette.success.main, 0.1)} 100%)`,
                         border: `1px solid ${alpha(theme.palette.success.main, 0.3)}`,
                         transition: 'border-color 0.3s ease',
+                        backdropFilter: "blur(12px)",        // ⬅ blurred glass
+                        WebkitBackdropFilter: "blur(12px)",
                         '&:hover': {
-                          borderColor: theme.palette.success.main
+                          borderColor: theme.palette.success.main,
+                          boxShadow: `0 8px 24px ${alpha(theme.palette.success.main, 0.15)}`
                         }
                       }}
                     >
@@ -393,7 +402,7 @@ const About = ({ about, socialLinks, contact }) => {
                       }
                     }}
                   >
-                    Get In Touch
+                    Let's Connect
                   </Button>
                 </Stack>
               </Box>
@@ -490,7 +499,7 @@ const About = ({ about, socialLinks, contact }) => {
             <Divider sx={{ my: 3 }} />
 
             {/* Action Buttons */}
-            <motion.div variants={itemVariants}>
+            {/* <motion.div variants={itemVariants}>
               <Stack 
                 direction={{ xs: 'column', sm: 'row' }} 
                 spacing={2} 
@@ -514,7 +523,7 @@ const About = ({ about, socialLinks, contact }) => {
                   Let's Connect
                 </Button>
               </Stack>
-            </motion.div>
+            </motion.div> */}
           </Grid>
         </Grid>
       </motion.div>

@@ -19,6 +19,7 @@ import PersonPinIcon from '@mui/icons-material/PersonPin';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import PersonIcon from '@mui/icons-material/Person';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import { useAppContext } from "@common-ui/app-provider";
 
 const sectionMeta = {
   about: { title: "About Me", icon: <PersonIcon fontSize="medium" /> },
@@ -34,6 +35,8 @@ export default function HeaderBar() {
   const section = location.pathname.replace("/", "") || "about";
   const theme = useTheme();
   const navigate = useNavigate();
+  const { accounts } = useAppContext();
+  const { socialLinks } = accounts;
   const isDark = theme.palette.mode === "dark";
   const { toggleTheme } = useThemeContext();
   const { title, icon } = useMemo(() => {
@@ -87,11 +90,11 @@ export default function HeaderBar() {
       </Stack>
 
       <Stack direction="row" alignItems="center" spacing={1.5}>
-        <IconButton component="a" href="https://github.com/vignesh" target="_blank" color="inherit" size="small">
+        <IconButton component="a" href={socialLinks?.github} target="_blank" color="inherit" size="small">
           <GitHubIcon fontSize="medium" />
         </IconButton>
 
-        <IconButton component="a" href="https://linkedin.com/in/vignesh" target="_blank" color="inherit" size="small">
+        <IconButton component="a" href={socialLinks?.linkedin} target="_blank" color="inherit" size="small">
           <LinkedInIcon fontSize="medium" />
         </IconButton>
 

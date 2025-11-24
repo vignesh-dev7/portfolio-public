@@ -1,4 +1,4 @@
-import React, { useMemo, useRef  } from "react";
+import React, { useMemo, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Box, useTheme } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
@@ -7,6 +7,7 @@ import Skills from "./sections/Skills";
 import Projects from "./sections/Projects";
 import Contact from "./sections/Contact";
 import ResumeViewer from "./sections/ResumeViewer";
+import BackToTop from "./BackToTop";
 import { useAppContext } from "@common-ui/app-provider";
 /* import Experience from "./sections/Experience";
 import Education from "./sections/Education"; */
@@ -19,6 +20,7 @@ export default function Portfolio() {
     const theme = useTheme();
     const prevSectionRef = useRef(section);
 
+    console.log(`accounts: ${JSON.stringify(accounts, 2, null)}`)
     // Detect navigation direction
     const direction = useMemo(() => {
         const prevIndex = sectionsOrder.indexOf(prevSectionRef.current);
@@ -29,6 +31,9 @@ export default function Portfolio() {
         return currentIndex > prevIndex ? "down" : "up";
     }, [section]);
 
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [section]);
     // Animation direction
     const variants = {
         initial: (dir) => ({
@@ -77,7 +82,7 @@ export default function Portfolio() {
     };
 
     return (
-        <Box sx={{ transition: "background-color 0.3s ease, color 0.3s ease", color: theme.palette.text.primary }}>
+        <Box sx={{ transition: "background-color 0.3s ease, color 0.3s ease", color: theme.palette.text.primary, position: "relative", minHeight: "100%" }}>
             <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                     key={section}
@@ -87,13 +92,14 @@ export default function Portfolio() {
                     animate="animate"
                     exit="exit"
                     style={{
-                        position: "absolute",
+                        //position: "absolute",
                         width: "100%",
                         willChange: "transform, opacity, filter",
                     }}
                 >
                     {renderSection()}
                 </motion.div>
+                <BackToTop /> 
             </AnimatePresence>
         </Box>
     );

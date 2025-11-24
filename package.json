@@ -18,6 +18,9 @@
     "pnp": true
   },
   "devDependencies": {
+    "@esbuild/linux-x64": "^0.27.0",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.0",
     "@yarnpkg/esbuild-plugin-pnp": "^3.0.0-rc.15",
     "vite": "^7.2.1"

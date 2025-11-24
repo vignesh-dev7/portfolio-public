@@ -109,7 +109,7 @@ const Skills = ({ skills }) => {
     const uniqueId = useId();
     const gradientId = `grad-${skill._id}-${uniqueId}`;
   
-    console.log(`skill: ${JSON.stringify(skill, null, 2)}`);
+    //console.log(`skill: ${JSON.stringify(skill, null, 2)}`);
     return (
         <Box
           onMouseEnter={() => setIsHovered(true)}
@@ -288,7 +288,7 @@ const Skills = ({ skills }) => {
     <section>
       <motion.div variants={containerVariants} initial="hidden" whileInView="visible">
         {/* Category Badges */}
-        <Grid container spacing={4} sx={{ width: '80%' }}>
+        <Grid container spacing={4} sx={{ width: '95%' }}>
           <Grid item xs={12}>
             <motion.div  initial="hidden" animate="visible" variants={itemVariants}>
               <Stack direction="row" spacing={1.5} flexWrap="wrap" justifyContent="center" mb={4}>

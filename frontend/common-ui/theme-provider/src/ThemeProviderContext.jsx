@@ -54,7 +54,7 @@ export const ThemeProviderContext = ({ children }) => {
         <GlobalStyles
           styles={{
             html: {
-              height: "auto",
+              //height: "100%",
               backgroundColor: theme.palette.background.default,
             },
             body: {

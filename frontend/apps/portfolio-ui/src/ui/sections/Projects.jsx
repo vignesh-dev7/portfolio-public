@@ -66,28 +66,35 @@ const Projects = ({ projects }) => {
     },
   };
 
-  const cardStyles = (darkBg, lightBg) => ({
-    p: 3,
-    borderRadius: 3,
-    height: "100%",
-    background: isDark ? darkBg : lightBg,
-    border: `1px solid ${
-      isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.12)"
-    }`,
-    transition: "all 0.35s ease",
-    //cursor: "pointer",
+  const extractFirstColor = (gradient) => {
+    const match = gradient.match(/#([0-9A-Fa-f]{6})/); // first hex color
+    return match ? `#${match[1]}` : "rgba(0,0,0,0.1)";
+  };
 
-    "&:hover": {
-      transform: "translateY(-4px)",
-      boxShadow: isDark
-        ? "0 0 12px rgba(255,255,255,0.15), 0 0 25px rgba(255,255,255,0.1)"
-        : "0 0 12px rgba(0,0,0,0.12), 0 0 25px rgba(0,0,0,0.08)",
+  const cardStyles = (darkBg, lightBg) => {
+    const darkShadowColor = extractFirstColor(darkBg);
+    const lightShadowColor = extractFirstColor(lightBg);
 
-      border: `1px solid ${
-        isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)"
-      }`,
-    },
-  });
+    return {
+      p: 3,
+      borderRadius: 3,
+      height: "100%",
+      background: isDark ? darkBg : lightBg,
+      border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.12)"}`,
+      transition: "all 0.35s ease",
+
+      "&:hover": {
+        transform: "translateY(-4px)",
+        boxShadow: isDark
+          ? `0 8px 24px ${darkShadowColor}80` // 80 = opacity
+          : `0 8px 24px ${lightShadowColor}80`,
+        border: `1px solid ${
+          isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)"
+        }`
+      }
+    }
+  };
+
 
   const toggleProject = (projectId) => {
     if (expandedProject === projectId) {
@@ -170,15 +177,15 @@ const Projects = ({ projects }) => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <Grid container spacing={4} sx={{ width: '80%' }}>
+        <Grid container spacing={4} sx={{ width: '95%' }}>
           <Grid container spacing={3} sx={{ pl: 8, pb: 4, pt: 4 }}>
             {/* Total Projects */}
             <Grid item xs={12} sm={6} md={3}>
               <motion.div variants={itemVariants}>
                 <Box
                   sx={cardStyles(
-                    "linear-gradient(135deg, #0A1A3A 0%, #071A2F 100%)",
-                    "linear-gradient(135deg, #E8F1FF 0%, #DDEBFF 100%)"
+                    "linear-gradient(135deg, #0A1A3A 0%, #0f2d4fff 100%)",
+                    "linear-gradient(135deg, #E8F1FF 0%, #9fc1f0ff 100%)"
                   )}
                 >
                   <Stack direction="row" alignItems="center" spacing={2}>
@@ -385,7 +392,7 @@ const Projects = ({ projects }) => {
                               <Box
                                 sx={{
                                   position: 'absolute',
-                                  left: { xs: -13, md: -41 },
+                                  left: { xs: -21, md: -44 },
                                   top: 32,
                                   width: 20,
                                   height: 20,
