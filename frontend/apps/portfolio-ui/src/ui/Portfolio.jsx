@@ -67,7 +67,7 @@ export default function Portfolio() {
     const renderSection = () => {
         switch (section) {
             case "about":
-                return <About about={accounts?.about} contact={accounts?.contact} socialLinks={accounts?.socialLinks}/>;
+                return <About about={accounts?.about} contact={accounts?.contact} socialLinks={accounts?.socialLinks} experiences={accounts?.experience} education={accounts?.education}/>;
             case "skills":
                 return <Skills skills={accounts?.skills}/>;
             case "projects":

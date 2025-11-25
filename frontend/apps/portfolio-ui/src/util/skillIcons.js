@@ -35,6 +35,7 @@ const ALIASES = {
   frontend: "frontend",
   backend: "backend",
   devops: "devops",
+  discord: "discord",
   other: "other",
 };
 

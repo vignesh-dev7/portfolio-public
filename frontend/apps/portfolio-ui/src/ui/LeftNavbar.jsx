@@ -46,7 +46,7 @@ export default function LeftNavbar() {
       sx={{
         width: "100%",
         height: "100%",
-        p: 2,
+        p: 0,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -176,11 +176,11 @@ export default function LeftNavbar() {
       </Stack>
 
       {/* Footer */}
-      <Box sx={{ width: "100%", textAlign: "center", mt: "auto", pt: 2, mr: 0 }}>
+      <Box sx={{ width: "100%", textAlign: "center", mt: "auto", pt: 2, mr: 0, pb: 2 }}>
         <Divider
           sx={{
             mb: 2,
-            mr: 4,
+            mr: 0,
             borderColor: theme.palette.divider,
             opacity: 0.6,
           }}

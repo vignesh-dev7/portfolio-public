@@ -26,7 +26,7 @@ import CodeIcon from '@mui/icons-material/Code';
 import CloudIcon from '@mui/icons-material/Cloud';
 import { motion } from "framer-motion";
 
-const About = ({ about, socialLinks, contact }) => {
+const About = ({ about, socialLinks, contact, experiences, education }) => {
 
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -92,7 +92,7 @@ const About = ({ about, socialLinks, contact }) => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <Grid container spacing={4} alignItems="flex-start" p={2}>
+        <Grid container spacing={4} alignItems="flex-start" p={1}>
           {/* About Content */}
           <Grid item xs={12} md={11} lg={10}>
 

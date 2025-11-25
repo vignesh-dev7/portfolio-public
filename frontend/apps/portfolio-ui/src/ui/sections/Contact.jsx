@@ -7,7 +7,9 @@ import {
   Button,
   useTheme,
   alpha,
-  Link
+  Link,
+  IconButton,
+  TextField 
 } from "@mui/material";
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -19,6 +21,7 @@ import MessageIcon from '@mui/icons-material/Message';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PublicIcon from '@mui/icons-material/Public';
 import { motion } from "framer-motion";
+import WorkIcon from '@mui/icons-material/Work';
 
 const Contact = ({ contact, socialLinks }) => {
   const theme = useTheme();
@@ -82,7 +85,7 @@ const Contact = ({ contact, socialLinks }) => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <Grid container spacing={4} alignItems="flex-start" sx={{ p: 2, width: '95%' }}>
+        <Grid container spacing={4} alignItems="flex-start" sx={{ p: 1, width: '95%' }}>
           <Grid item xs={12}>
             {/* Section Header */}
             <motion.div variants={itemVariants}>
@@ -111,17 +114,17 @@ const Contact = ({ contact, socialLinks }) => {
             </motion.div>
 
             {/* Split Layout */}
-            <Grid container spacing={4}>
+            <Grid container spacing={4} alignItems="stretch">
               {/* Left Side - Contact Info */}
               <Grid item xs={12} lg={6}>
                 <motion.div variants={itemVariants}>
-                  <Stack spacing={3}>
+                  <Stack spacing={2}>
                     {/* Availability Badge */}
                     <Box
                       sx={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: 1.5,
+                        gap: 2,
                         px: 3,
                         py: 1.5,
                         background: isDark
@@ -334,8 +337,62 @@ const Contact = ({ contact, socialLinks }) => {
                       </Box>
                     )}
 
+                    {/* social Card */}
+                    {socialLinks && (
+                      <Box
+                        sx={{
+                          p: 3,
+                          borderRadius: 2,
+                          background: isDark
+                            ? alpha(theme.palette.background.paper, 0.6)
+                            : alpha(theme.palette.background.paper, 0.9),
+                          backdropFilter: 'blur(20px)',
+                          border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            background: isDark
+                              ? alpha(theme.palette.background.paper, 0.8)
+                              : theme.palette.background.paper,
+                            transform: 'translateY(-2px)',
+                            boxShadow: `0 8px 24px ${alpha(theme.palette.warning.main, 0.15)}`
+                          }
+                        }}
+                      >
+                        <Stack direction="row" spacing={2} alignItems="flex-start">
+                          <Box
+                            sx={{
+                              width: 48,
+                              height: 48,
+                              borderRadius: 1.5,
+                              background: alpha(theme.palette.warning.main, 0.15),
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0
+                            }}
+                          >
+                            <WorkIcon sx={{ color: theme.palette.warning.main, fontSize: 24 }} />
+                          </Box>
+
+                          <Box flex={1}>
+                            <Typography variant="caption" color="text.secondary" display="block" mb={0}>
+                              Work Preferences
+                            </Typography>
+
+                            <Typography
+                              variant="body1"
+                              fontWeight={600}
+                              color="text.primary"
+                            >
+                              Onsite | Remote
+                            </Typography>
+                          </Box>
+                        </Stack>
+                      </Box>
+                    )}
+
                     {/* Social Links */}
-                    <Stack direction="row" spacing={2} pt={2}>
+                    {/* <Stack direction="row" spacing={2} pt={2}>
                       {socialLinks?.github && (
                         <Button
                           variant="outlined"
@@ -381,168 +438,103 @@ const Contact = ({ contact, socialLinks }) => {
                           LinkedIn
                         </Button>
                       )}
-                    </Stack>
+                    </Stack> */}
                   </Stack>
                 </motion.div>
               </Grid>
-
-              {/* Right Side - CTA Section */}
-            <Grid item xs={12} lg={6}>
-                <motion.div variants={itemVariants} style={{ height: '85%'}}>
-                  <Box
+              <Grid item xs={12} lg={6}>
+                <Box
+                  component={motion.div}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  sx={{
+                    mt: 7.5,
+                    p: 3,
+                    borderRadius: 3,
+                    maxWidth: "900px",
+                    mx: "auto",
+                    background: isDark
+                      ? alpha(theme.palette.background.paper, 0.6)
+                      : alpha(theme.palette.background.paper, 0.9),
+                    backdropFilter: "blur(20px)",
+                    border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                    boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.15)}`
+                  }}
+                >
+                  <Typography
+                    variant="h4"
+                    fontWeight={800}
+                    gutterBottom
                     sx={{
-                      p: 4,
-                      borderRadius: 3,
-                      background: isDark
-                        ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.6)} 0%, ${alpha(theme.palette.background.default, 0.8)} 100%)`
-                        : `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.primary.light, 0.05)} 100%)`,
-                      backdropFilter: 'blur(20px)',
-                      border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between'
+                      background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
                     }}
                   >
+                    Say Hello!
+                  </Typography>
+
+                  <Typography variant="body1" color="text.secondary" mb={4} maxWidth="600px">
+                    I'm quick to respond and always happy to discuss new opportunities, collaborations, or ideas. 
+                    Feel free to drop me a message anytime.
+                  </Typography>
+
+
+                  {/* Form */}
+                  <Stack spacing={2.8} maxWidth="600px">
                     <Box>
-                      <Typography variant="h5" fontWeight={700} gutterBottom>
-                        Ready to Collaborate?
+                      <Typography variant="subtitle2" fontWeight={600} mb={0.5}>
+                        Name
                       </Typography>
-                      <Typography variant="body1" color="text.secondary" paragraph>
-                        I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.
-                      </Typography>
-
-                      {/* Quick Info Cards */}
-                      <Stack spacing={2} mb={3}>
-                        <Box
-                          sx={{
-                            p: 2,
-                            borderRadius: 1.5,
-                            background: alpha(theme.palette.primary.main, 0.08),
-                            border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`
-                          }}
-                        >
-                          <Stack direction="row" spacing={2} alignItems="center">
-                            <Box
-                              sx={{
-                                width: 36,
-                                height: 36,
-                                borderRadius: 1,
-                                background: alpha(theme.palette.primary.main, 0.15),
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0
-                              }}
-                            >
-                              <MessageIcon sx={{ color: theme.palette.primary.main, fontSize: 20 }} />
-                            </Box>
-                            <Box>
-                              <Typography variant="caption" color="text.secondary" display="block">
-                                Response Time
-                              </Typography>
-                              <Typography variant="body2" fontWeight={600}>
-                                {additionalInfo.availability.responseTime}
-                              </Typography>
-                            </Box>
-                          </Stack>
-                        </Box>
-
-                        <Box
-                          sx={{
-                            p: 2,
-                            borderRadius: 1.5,
-                            background: alpha(theme.palette.secondary.main, 0.08),
-                            border: `1px solid ${alpha(theme.palette.secondary.main, 0.15)}`
-                          }}
-                        >
-                          <Stack direction="row" spacing={2} alignItems="center">
-                            <Box
-                              sx={{
-                                width: 36,
-                                height: 36,
-                                borderRadius: 1,
-                                background: alpha(theme.palette.secondary.main, 0.15),
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0
-                              }}
-                            >
-                              <AccessTimeIcon sx={{ color: theme.palette.secondary.main, fontSize: 20 }} />
-                            </Box>
-                            <Box>
-                              <Typography variant="caption" color="text.secondary" display="block">
-                                Best Time
-                              </Typography>
-                              <Typography variant="body2" fontWeight={600}>
-                                {additionalInfo.bestTime}
-                              </Typography>
-                            </Box>
-                          </Stack>
-                        </Box>
-
-                        <Box
-                          sx={{
-                            p: 2,
-                            borderRadius: 1.5,
-                            background: alpha(theme.palette.success.main, 0.08),
-                            border: `1px solid ${alpha(theme.palette.success.main, 0.15)}`
-                          }}
-                        >
-                          <Stack direction="row" spacing={2} alignItems="center">
-                            <Box
-                              sx={{
-                                width: 36,
-                                height: 36,
-                                borderRadius: 1,
-                                background: alpha(theme.palette.success.main, 0.15),
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0
-                              }}
-                            >
-                              <PublicIcon sx={{ color: theme.palette.success.main, fontSize: 20 }} />
-                            </Box>
-                            <Box>
-                              <Typography variant="caption" color="text.secondary" display="block">
-                                Timezone
-                              </Typography>
-                              <Typography variant="body2" fontWeight={600}>
-                                {additionalInfo.timezone}
-                              </Typography>
-                            </Box>
-                          </Stack>
-                        </Box>
-                      </Stack>
+                      <TextField fullWidth placeholder="How should I address you" variant="outlined" />
                     </Box>
 
-                    {/* CTA Button - Pushed to bottom */}
-                    <Button
-                      variant="contained"
-                      size="large"
-                      fullWidth
-                      startIcon={<SendIcon />}
-                      href={`mailto:${contact?.email}`}
-                      sx={{
-                        py: 1.5,
-                        borderRadius: 2,
-                        fontWeight: 600,
-                        fontSize: '1rem',
-                        textTransform: 'none',
-                        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.4)}`
-                        }
-                      }}
-                    >
-                      Send an Email
-                    </Button>
-                  </Box>
-                </motion.div>
-            </Grid>
+                    <Box>
+                      <Typography variant="subtitle2" fontWeight={600} mb={0.5}>
+                        Email Address
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        placeholder="your@email.com"
+                        variant="outlined"
+                        InputProps={{
+                          endAdornment: <EmailIcon sx={{ opacity: 0.4, mr: 1 }} />,
+                        }}
+                      />
+                    </Box>
+
+                    <Box>
+                      <Typography variant="subtitle2" fontWeight={600} mb={0.5}>
+                        Message
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        multiline
+                        minRows={4}
+                        placeholder="Let's talk! Type your message..."
+                        variant="outlined"
+                      />
+                    </Box>
+
+                    {/* Buttons */}
+                    <Stack direction="row" spacing={2} mt={2} sx={{ justifyContent: "flex-end" }}>
+                      <Button
+                        variant="outlined"
+                        sx={{
+                          py: 1.3,
+                          px: 4,
+                          borderRadius: 2,
+                          fontWeight: 600,
+                          textTransform: "none",
+                        }}
+                      >
+                        Submit
+                      </Button>
+                    </Stack>
+                  </Stack>
+                </Box>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

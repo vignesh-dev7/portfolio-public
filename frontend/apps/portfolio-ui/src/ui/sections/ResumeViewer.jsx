@@ -38,11 +38,31 @@ const ResumeViewer = ({ socialLinks }) => {
 
   const [pages, setPages] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [docInfo, setDocInfo] = useState({
+    fileName: "",
+    fileSize: "",
+    updatedAt: "",
+    pages: "",
+  });
 
-  const handleDownload = () => {
-    // TODO: wire actual resume URL
-    alert("Downloading resume...");
+  const handleDownload = async () => {
+    const url = socialLinks?.resumeLink;
+
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const downloadUrl = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = "Vignesh_Resume.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(downloadUrl);
   };
+
+  
 
   const handleShare = () => {
     alert("Share options coming soon!");
@@ -110,6 +130,53 @@ const ResumeViewer = ({ socialLinks }) => {
       pdfToImages(socialLinks.resumeLink, 2.4).then(setPages);
     }
   }, [socialLinks]);
+
+  // Convert bytes to KB/MB
+const formatFileSize = (bytes) => {
+  if (!bytes) return "Unknown";
+  const kb = bytes / 1024;
+  return kb < 1024 ? `${kb.toFixed(1)} KB` : `${(kb / 1024).toFixed(1)} MB`;
+};
+
+const loadDocumentInfo = async () => {
+    const url = socialLinks?.resumeLink;
+
+    // File name from URL
+    const fileName = decodeURIComponent(url.split("/").pop());
+
+    // Fetch meta (NO CORS issue)
+    const res = await fetch(url, {
+      method: "GET",
+      headers: { Range: "bytes=0-2048" }
+    });
+
+    const fileSize = res.headers.get("Content-Length");
+    const updatedAt = res.headers.get("Last-Modified");
+
+    // Fetch pages (PDF.js)
+    let pages = 1;
+    try {
+      const fullRes = await fetch(url);
+      const blob = await fullRes.blob();
+      const arrayBuffer = await blob.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      pages = pdf.numPages;
+    } catch (err) {
+      console.error("PDF page read failed", err);
+    }
+
+    setDocInfo({
+      fileName,
+      fileSize: formatFileSize(fileSize),
+      updatedAt: new Date(updatedAt).toDateString(),
+      pages
+    });
+  };
+
+  console.log(`META: PDF: ${JSON.stringify(docInfo)}`)
+  useEffect(() => {
+    loadDocumentInfo();
+  }, []);
   return (
     <section>
         <motion.div
@@ -118,7 +185,7 @@ const ResumeViewer = ({ socialLinks }) => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
         >
-            <Grid container spacing={6} sx={{ width: '95%' }}>
+            <Grid container spacing={6} sx={{ width: '95%', p: 1 }}>
                 {/* Resume Viewer Card */}
                 <Grid item xs={12}>
                     <Paper
@@ -328,10 +395,10 @@ const ResumeViewer = ({ socialLinks }) => {
                                         Document Information
                                     </Typography>
                                     {[
-                                    ["File Name:", "John_Doe_Resume.pdf"],
-                                    ["File Size:", "245 KB"],
-                                    ["Last Updated:", "Nov 19, 2025"],
-                                    ["Pages:", numPages || "1"],
+                                    ["File Name:", `${docInfo?.fileName}`],
+                                    ["File Size:", `${docInfo?.fileSize}`],
+                                    ["Last Updated:", `${docInfo?.updatedAt}`],
+                                    ["Pages:", `${docInfo?.pages}` || "1"],
                                     ].map(([label, value], i) => (
                                     <Box justifyContent="space-between" display="flex" my={1} key={i}>
                                         <Typography color="text.secondary">{label}</Typography>

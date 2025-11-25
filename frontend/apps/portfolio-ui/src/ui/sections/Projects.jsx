@@ -177,8 +177,8 @@ const Projects = ({ projects }) => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <Grid container spacing={4} sx={{ width: '95%' }}>
-          <Grid container spacing={3} sx={{ pl: 8, pb: 4, pt: 4 }}>
+        <Grid container spacing={4} sx={{ width: '95%', p: 1 }}>
+          <Grid container spacing={3} sx={{ pl: 4, pb: 4, pt: 4 }}>
             {/* Total Projects */}
             <Grid item xs={12} sm={6} md={3}>
               <motion.div variants={itemVariants}>
@@ -392,7 +392,7 @@ const Projects = ({ projects }) => {
                               <Box
                                 sx={{
                                   position: 'absolute',
-                                  left: { xs: -21, md: -44 },
+                                  left: { xs: -21, md: -45 },
                                   top: 32,
                                   width: 20,
                                   height: 20,
