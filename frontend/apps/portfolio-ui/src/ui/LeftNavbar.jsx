@@ -47,6 +47,7 @@ export default function LeftNavbar() {
         width: "100%",
         height: "100%",
         p: 0,
+        mt: 3,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

@@ -49,6 +49,8 @@ const portfolioSchema = new mongoose.Schema({
       techStack: [String],
       githubLink: String,
       liveDemo: String,
+      s3Folder: String,
+      imageCount: Number,
       image: String
     }
   ],

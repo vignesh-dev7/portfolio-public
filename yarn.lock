@@ -3443,6 +3443,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-router-dom: "npm:^6.26.2"
     react-router-hash-link: "npm:^2.4.3"
+    react-swipeable: "npm:^7.0.2"
     vite: "npm:^5.4.0"
   languageName: unknown
   linkType: soft
@@ -3643,6 +3644,15 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 10c0/cff5ea92d248d2230adc46d4e2ed3fbeddfaf1ae2e63411da8b7ea6ddc207d71dbc522c05c492e671e553e2153934f4ab180ac02bd36205b274e097f2cfe6fc4
+  languageName: node
+  linkType: hard
+
+"react-swipeable@npm:^7.0.2":
+  version: 7.0.2
+  resolution: "react-swipeable@npm:7.0.2"
+  peerDependencies:
+    react: ^16.8.3 || ^17 || ^18 || ^19.0.0 || ^19.0.0-rc
+  checksum: 10c0/cca3ec9e6321f73d187a8ac4beece2ad8cce1f4efa0215de93e2635492e7c514ccbc30311bb0e88bafb79d302916550603cdcd44ac81054a8c0f6679b18eb04d
   languageName: node
   linkType: hard
 

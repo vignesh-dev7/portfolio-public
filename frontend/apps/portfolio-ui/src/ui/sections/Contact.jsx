@@ -449,7 +449,7 @@ const Contact = ({ contact, socialLinks }) => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6 }}
                   sx={{
-                    mt: 7.5,
+                    mt: 0,
                     p: 3,
                     borderRadius: 3,
                     maxWidth: "900px",

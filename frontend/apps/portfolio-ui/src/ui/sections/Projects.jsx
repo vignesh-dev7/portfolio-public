@@ -29,6 +29,8 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import QueryBuilderIcon from '@mui/icons-material/QueryBuilder';
 import { motion, AnimatePresence } from "framer-motion";
 import { getSkillIcon } from "../../util/skillIcons.js";
+import { getProjectImages } from "../../util/getProjectImages";
+import ScreenshotGallery from "../../util/ScreenshotGallery";
 
 
 const Projects = ({ projects }) => {
@@ -178,7 +180,7 @@ const Projects = ({ projects }) => {
         viewport={{ once: true, amount: 0.2 }}
       >
         <Grid container spacing={4} sx={{ width: '95%', p: 1 }}>
-          <Grid container spacing={3} sx={{ pl: 4, pb: 4, pt: 4 }}>
+          <Grid container spacing={3} xs={12} sm={12} md={12} sx={{ pl: 4, pb: 4, pt: 4 }}>
             {/* Total Projects */}
             <Grid item xs={12} sm={6} md={3}>
               <motion.div variants={itemVariants}>
@@ -385,6 +387,7 @@ const Projects = ({ projects }) => {
                         const projectId = project._id?.$oid || project._id || `project-${index}`;
                         const statusColor = getStatusColor(project.status);
 
+                        console.log(`Project image: ${project?.s3Folder}`)
                         return (
                           <motion.div key={projectId} variants={itemVariants}>
                             <Box sx={{ position: 'relative', pl: { xs: 3, md: 5 } }}>
@@ -620,37 +623,16 @@ const Projects = ({ projects }) => {
                                               )}
 
                                               {/* Screenshots */}
-                                              {project.screenshots && project.screenshots.length > 0 && (
-                                                <Box>
+                                              {project?.s3Folder && (
+                                                <Box sx={{ mt: 3 }}>
                                                   <Typography variant="h6" fontWeight={600} gutterBottom>
                                                     Screenshots
                                                   </Typography>
-                                                  <Grid container spacing={2}>
-                                                    {project.screenshots.map((screenshot, i) => (
-                                                      <Grid item xs={12} sm={6} key={i}>
-                                                        <Box
-                                                          component="img"
-                                                          src={screenshot}
-                                                          alt={`Screenshot ${i + 1}`}
-                                                          sx={{
-                                                            width: '100%',
-                                                            height: 200,
-                                                            objectFit: 'cover',
-                                                            borderRadius: 2,
-                                                            border: `1px solid ${theme.palette.divider}`,
-                                                            transition: 'transform 0.3s ease',
-                                                            '&:hover': {
-                                                              transform: 'scale(1.02)',
-                                                              borderColor: theme.palette.primary.main
-                                                            }
-                                                          }}
-                                                        />
-                                                      </Grid>
-                                                    ))}
-                                                  </Grid>
+
+                                                  {/* Generate image list */}
+                                                  <ScreenshotGallery  images={getProjectImages(project?.s3Folder, project?.imageCount)}/>
                                                 </Box>
                                               )}
-
                                               {/* Challenges */}
                                               {project.challenges && (
                                                 <Box

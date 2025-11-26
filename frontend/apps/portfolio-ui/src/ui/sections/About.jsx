@@ -24,6 +24,7 @@ import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import CodeIcon from '@mui/icons-material/Code';
 import CloudIcon from '@mui/icons-material/Cloud';
+import SchoolIcon from '@mui/icons-material/School';
 import { motion } from "framer-motion";
 
 const About = ({ about, socialLinks, contact, experiences, education }) => {
@@ -164,7 +165,7 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                             ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.15)} 0%, ${alpha(theme.palette.primary.dark, 0.25)} 100%)`
                             : `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
                           border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
-                          backdropFilter: "blur(12px)",        // ⬅ blurred glass
+                          backdropFilter: "blur(12px)",
                           WebkitBackdropFilter: "blur(12px)",
                           transition: 'border-color 0.3s ease',
                           '&:hover': {
@@ -210,7 +211,7 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                           : `linear-gradient(135deg, ${alpha(theme.palette.secondary.light, 0.2)} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 100%)`,
                         border: `1px solid ${alpha(theme.palette.secondary.main, 0.3)}`,
                         transition: 'border-color 0.3s ease',
-                        backdropFilter: "blur(12px)",        // ⬅ blurred glass
+                        backdropFilter: "blur(12px)",
                         WebkitBackdropFilter: "blur(12px)",
                         '&:hover': {
                           borderColor: theme.palette.secondary.main,
@@ -254,7 +255,7 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                           : `linear-gradient(135deg, ${alpha(theme.palette.success.light, 0.2)} 0%, ${alpha(theme.palette.success.main, 0.1)} 100%)`,
                         border: `1px solid ${alpha(theme.palette.success.main, 0.3)}`,
                         transition: 'border-color 0.3s ease',
-                        backdropFilter: "blur(12px)",        // ⬅ blurred glass
+                        backdropFilter: "blur(12px)",
                         WebkitBackdropFilter: "blur(12px)",
                         '&:hover': {
                           borderColor: theme.palette.success.main,
@@ -352,7 +353,7 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                         justifyContent: 'center'
                       }}
                     >
-                      <WorkIcon sx={{ color: theme.palette.success.secondary, fontSize: 32 }} />
+                      <WorkIcon sx={{ color: theme.palette.success.contrastText, fontSize: 32 }} />
                     </Box>
                     <Box flex={1}>
                       <Typography 
@@ -408,9 +409,220 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
               </Box>
             </motion.div>
 
+            {/* Experience & Education Timeline */}
+            {((experiences && experiences?.length > 0) || (education && education?.length > 0)) && (
+              <>
+                <motion.div variants={itemVariants}>
+                  <Typography 
+                    variant="h5" 
+                    fontWeight={700} 
+                    gutterBottom
+                    sx={{ 
+                      mt: 4,
+                      mb: 3,
+                      color: theme.palette.primary.main 
+                    }}
+                  >
+                    Professional Journey
+                  </Typography>
+                </motion.div>
+
+                <Box sx={{ position: 'relative', pl: { xs: 2, md: 6 }, pb: 4 }}>
+                  {/* Timeline Line */}
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      left: { xs: 8, md: 24 },
+                      top: 0,
+                      bottom: 0,
+                      width: 2,
+                      background: `linear-gradient(180deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                    }}
+                  />
+
+                  <Stack spacing={4}>
+                    {/* Experience Section */}
+                    {experiences && experiences?.length > 0 && (
+                      <Box>
+                        <motion.div variants={itemVariants}>
+                          <Box sx={{ position: 'relative', mb: 3 }}>
+                            <Chip
+                              icon={<WorkIcon />}
+                              label="Experience"
+                              sx={{
+                                px: 2,
+                                py: 2,
+                                fontSize: '1rem',
+                                fontWeight: 700,
+                                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                                color: 'white',
+                                border: `2px solid ${alpha(theme.palette.primary.light, 0.3)}`,
+                                boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.3)}`
+                              }}
+                            />
+                          </Box>
+                        </motion.div>
+
+                        <Stack spacing={3}>
+                          {experiences?.map((exp, index) => (
+                            <motion.div key={index} variants={itemVariants}>
+                              <Box sx={{ position: 'relative', pl: { xs: 3, md: 4 } }}>
+                                {/* Timeline Dot */}
+                                <Box
+                                  sx={{
+                                    position: 'absolute',
+                                    left: { xs: -18, md: -34 },
+                                    top: 85,
+                                    width: 16,
+                                    height: 16,
+                                    borderRadius: '50%',
+                                    bgcolor: theme.palette.primary.main,
+                                    border: `3px solid ${theme.palette.background.default}`,
+                                    boxShadow: `0 0 0 2px ${theme.palette.primary.main}`,
+                                    zIndex: 1
+                                  }}
+                                />
+
+                                {/* Experience Card */}
+                                <Box
+                                  sx={{
+                                    p: 3,
+                                    borderRadius: 2,
+                                    background: isDark
+                                      ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.background.default, 0.95)} 100%)`
+                                      : theme.palette.background.paper,
+                                    border: `1px solid ${theme.palette.divider}`,
+                                    transition: 'all 0.3s ease',
+                                    boxShadow: theme.shadows[2],
+                                    '&:hover': {
+                                      borderColor: theme.palette.primary.main,
+                                      transform: 'translateX(4px)',
+                                      boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.2)}`
+                                    }
+                                  }}
+                                >
+                                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={1} flexWrap="wrap" gap={1}>
+                                    <Typography variant="h6" fontWeight={700} color="primary">
+                                      {exp.position}
+                                    </Typography>
+                                    <Chip
+                                      icon={<CalendarTodayIcon sx={{ fontSize: 16 }} />}
+                                      label={`${exp.startDate} - ${exp.endDate}`}
+                                      size="small"
+                                      sx={{
+                                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                                        color: theme.palette.primary.main,
+                                        fontWeight: 600
+                                      }}
+                                    />
+                                  </Stack>
+                                  <Typography variant="subtitle1" color="text.secondary" fontWeight={600} gutterBottom>
+                                    {exp?.company}
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8, mt: 1 }}>
+                                    {exp?.description}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </motion.div>
+                          ))}
+                        </Stack>
+                      </Box>
+                    )}
+
+                    {/* Education Section */}
+                    {education && education?.length > 0 && (
+                      <Box>
+                        <motion.div variants={itemVariants}>
+                          <Box sx={{ position: 'relative', mb: 3, mt: 2 }}>
+                            <Chip
+                              icon={<SchoolIcon />}
+                              label="Education"
+                              sx={{
+                                px: 2,
+                                py: 2,
+                                fontSize: '1rem',
+                                fontWeight: 700,
+                                background: `linear-gradient(135deg, ${theme.palette.secondary.main} 0%, ${theme.palette.secondary.dark} 100%)`,
+                                color: 'white',
+                                border: `2px solid ${alpha(theme.palette.secondary.light, 0.3)}`,
+                                boxShadow: `0 4px 12px ${alpha(theme.palette.secondary.main, 0.3)}`
+                              }}
+                            />
+                          </Box>
+                        </motion.div>
+
+                        <Stack spacing={3}>
+                          {education?.map((edu, index) => (
+                            <motion.div key={index} variants={itemVariants}>
+                              <Box sx={{ position: 'relative', pl: { xs: 3, md: 4 } }}>
+                                {/* Timeline Dot */}
+                                <Box
+                                  sx={{
+                                    position: 'absolute',
+                                    left: { xs: -18, md: -34 },
+                                    top: 46,
+                                    width: 16,
+                                    height: 16,
+                                    borderRadius: '50%',
+                                    bgcolor: theme.palette.secondary.main,
+                                    border: `3px solid ${theme.palette.background.default}`,
+                                    boxShadow: `0 0 0 2px ${theme.palette.secondary.main}`,
+                                    zIndex: 1
+                                  }}
+                                />
+
+                                {/* Education Card */}
+                                <Box
+                                  sx={{
+                                    p: 3,
+                                    borderRadius: 2,
+                                    background: isDark
+                                      ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.background.default, 0.95)} 100%)`
+                                      : theme.palette.background.paper,
+                                    border: `1px solid ${theme.palette.divider}`,
+                                    transition: 'all 0.3s ease',
+                                    boxShadow: theme.shadows[2],
+                                    '&:hover': {
+                                      borderColor: theme.palette.secondary.main,
+                                      transform: 'translateX(4px)',
+                                      boxShadow: `0 4px 20px ${alpha(theme.palette.secondary.main, 0.2)}`
+                                    }
+                                  }}
+                                >
+                                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={1} flexWrap="wrap" gap={1}>
+                                    <Typography variant="h6" fontWeight={700} color="secondary">
+                                      {edu?.degree}
+                                    </Typography>
+                                    <Chip
+                                      icon={<CalendarTodayIcon sx={{ fontSize: 16 }} />}
+                                      label={`${edu?.startYear} - ${edu?.endYear}`}
+                                      size="small"
+                                      sx={{
+                                        bgcolor: alpha(theme.palette.secondary.main, 0.1),
+                                        color: theme.palette.secondary.main,
+                                        fontWeight: 600
+                                      }}
+                                    />
+                                  </Stack>
+                                  <Typography variant="subtitle1" color="text.secondary" fontWeight={600}>
+                                    {edu?.institution}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </motion.div>
+                          ))}
+                        </Stack>
+                      </Box>
+                    )}
+                  </Stack>
+                </Box>
+              </>
+            )}
+
             {/* Highlights */}
-            <motion.div variants={itemVariants}>
-              <Stack direction="row" spacing={1} mb={3} flexWrap="wrap" useFlexGap>
+            {/* <motion.div variants={itemVariants}>
+              <Stack direction="row" spacing={1} mb={3} mt= {4} flexWrap="wrap" useFlexGap>
                 {about?.highlights?.map((highlight, index) => (
                   <Chip 
                     key={index}
@@ -433,7 +645,7 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                   />
                 ))}
               </Stack>
-            </motion.div>
+            </motion.div> */}
 
             <Divider sx={{ my: 3 }} />
 
@@ -495,35 +707,6 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                 )}
               </Grid>
             </motion.div>
-
-            <Divider sx={{ my: 3 }} />
-
-            {/* Action Buttons */}
-            {/* <motion.div variants={itemVariants}>
-              <Stack 
-                direction={{ xs: 'column', sm: 'row' }} 
-                spacing={2} 
-                mb={2}
-              >
-                <Button
-                  variant="contained"
-                  size="large"
-                  href={`mailto:${contact?.email}`}
-                  sx={{
-                    fontWeight: 600,
-                    px: 4,
-                    py: 1.5,
-                    '&:hover': {
-                      transform: 'translateY(-2px)',
-                      boxShadow: theme.shadows[8],
-                      transition: 'all 0.3s ease'
-                    }
-                  }}
-                >
-                  Let's Connect
-                </Button>
-              </Stack>
-            </motion.div> */}
           </Grid>
         </Grid>
       </motion.div>
