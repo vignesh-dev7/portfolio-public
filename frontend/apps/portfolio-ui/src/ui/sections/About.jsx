@@ -26,6 +26,9 @@ import CodeIcon from '@mui/icons-material/Code';
 import CloudIcon from '@mui/icons-material/Cloud';
 import SchoolIcon from '@mui/icons-material/School';
 import { motion } from "framer-motion";
+import { getSkillIcon } from "../../util/skillIcons.js";
+import BadgeIcon from '@mui/icons-material/Badge';
+import ChromeReaderModeIcon from '@mui/icons-material/ChromeReaderMode';
 
 const About = ({ about, socialLinks, contact, experiences, education }) => {
 
@@ -82,6 +85,11 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
     return `${yearsPart}.${monthsPart}+ years`;
   };
 
+  const experiencesStatic = 
+    {
+      technologies: ["React(TS/JS)", "Node.js", "MongoDB", "GraphQL", "AWS", "Docker", "Kubernetes"],
+    };
+  
   const experience = calculateExperience(about?.experienceStartDate);
   console.log(`calculateExperience: ${experience}`);
 
@@ -99,30 +107,47 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
 
             {/* Name & Role */}
             <motion.div variants={itemVariants}>
-              <Typography 
-                variant="h3" 
-                gutterBottom 
-                fontWeight={700}
+              <Typography
+                variant="h3"
+                gutterBottom
+                fontWeight={800}
                 sx={{
-                  background: isDark 
-                    ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`
-                    : `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.secondary.dark} 100%)`,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
+                  letterSpacing: "0.5px",
+                  background: isDark
+                    ? `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.secondary.light} 100%)`
+                    : `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  textShadow: isDark
+                    ? "0px 3px 8px rgba(0,0,0,0.4)"
+                    : "0px 3px 8px rgba(0,0,0,0.1)", // soft glow
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    letterSpacing: "1px",
+                    textShadow: isDark
+                      ? "0px 3px 12px rgba(255,255,255,0.15)"
+                      : "0px 3px 12px rgba(0,0,0,0.2)",
+                  }
                 }}
               >
                 Hi, I'm {about?.name}
               </Typography>
             </motion.div>
 
+
             <motion.div variants={itemVariants}>
-              <Typography 
-                variant="h5" 
-                color="primary" 
+              <Typography
+                variant="h5"
                 gutterBottom
                 fontWeight={600}
-                sx={{ mb: 2 }}
+                sx={{
+                  mb: 2,
+                  color: theme.palette.primary.main,
+                  opacity: 0.9,
+                  transition: "opacity 0.3s ease",
+                  "&:hover": { opacity: 1 }
+                }}
               >
                 {about?.role}
               </Typography>
@@ -133,21 +158,31 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                 sx={{
                   borderLeft: `4px solid ${theme.palette.primary.main}`,
                   pl: 2,
-                  mb: 4
+                  mb: 4,
+                  py: 1,
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    borderLeftWidth: "6px",
+                    pl: 2.5,
+                  },
                 }}
               >
-                <Typography 
-                  variant="h6" 
+                <Typography
+                  variant="h6"
                   sx={{
-                    color: isDark ? theme.palette.text.secondary : theme.palette.text.primary,
+                    color: isDark
+                      ? theme.palette.text.secondary
+                      : theme.palette.text.primary,
                     fontStyle: "italic",
-                    fontWeight: 400
+                    fontWeight: 400,
+                    lineHeight: 1.7,
                   }}
                 >
                   "{about?.tagline}"
                 </Typography>
               </Box>
             </motion.div>
+
 
             {/* Stats Cards */}
             <motion.div variants={itemVariants}>
@@ -298,19 +333,31 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                   background: isDark
                     ? alpha(theme.palette.background.paper, 0.6)
                     : alpha(theme.palette.background.paper, 0.8),
-                  border: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
-                  backdropFilter: 'blur(10px)',
+                  border: `1px solid ${alpha(theme.palette.divider, 0.4)}`,
+                  backdropFilter: "blur(12px)",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+
+                  transition: "all 0.3s ease",
+
+                  "&:hover": {
+                    boxShadow: isDark
+                      ? "0 6px 22px rgba(0,0,0,0.35)"
+                      : "0 6px 20px rgba(0,0,0,0.18)",     // smoother glow
+                    transform: "translateY(-4px)",         // subtle lift
+                    borderColor: alpha(theme.palette.primary.main, 0.4),
+                  },
                 }}
               >
                 <Stack direction="row" spacing={1} alignItems="center" mb={2}>
-                  <WorkIcon sx={{ color: theme.palette.primary.main }} />
+                  <ChromeReaderModeIcon sx={{ color: theme.palette.primary.main }} />
                   <Typography variant="h6" fontWeight={600}>
                     About Me
                   </Typography>
                 </Stack>
-                <Typography 
-                  variant="body1" 
-                  color="text.secondary" 
+
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
                   sx={{ lineHeight: 1.8 }}
                 >
                   {about?.description}
@@ -318,93 +365,175 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
               </Box>
             </motion.div>
 
+
             {/* Currently Looking For - Enhanced CTA */}
             <motion.div variants={itemVariants}>
               <Box
                 sx={{
-                  p: 3,
-                  borderRadius: 2,
+                  position: 'relative',
+                  p: 4,
+                  borderRadius: 3,
                   mb: 3,
-                  border: `2px solid`,
-                  borderColor: theme.palette.success.main,
-                  bgcolor: isDark 
-                    ? alpha(theme.palette.success.main, 0.15)
-                    : alpha(theme.palette.success.main, 0.08),
+                  overflow: 'hidden',
+                  background: isDark
+                    ? `linear-gradient(135deg, ${alpha('#06b6d4', 0.08)} 0%, ${alpha('#3b82f6', 0.08)} 100%)`
+                    : `linear-gradient(135deg, ${alpha('#06b6d4', 0.03)} 0%, ${alpha('#3b82f6', 0.03)} 100%)`,
+                  border: `1px solid ${isDark ? alpha('#06b6d4', 0.2) : alpha('#06b6d4', 0.15)}`,
+                  backdropFilter: 'blur(10px)',
                   boxShadow: isDark
-                    ? `0 0 20px ${alpha(theme.palette.success.main, 0.1)}`
-                    : `0 0 20px ${alpha(theme.palette.success.main, 0.15)}`,
-                  transition: "all 0.3s ease",
+                    ? `0 8px 32px ${alpha('#000', 0.3)}`
+                    : `0 8px 32px ${alpha('#06b6d4', 0.08)}`,
+                  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                   '&:hover': {
+                    transform: 'translateY(-4px)',
                     boxShadow: isDark
-                      ? `0 0 30px ${alpha(theme.palette.success.main, 0.2)}`
-                      : `0 0 30px ${alpha(theme.palette.success.main, 0.25)}`,
+                      ? `0 12px 48px ${alpha('#000', 0.4)}`
+                      : `0 12px 48px ${alpha('#06b6d4', 0.12)}`,
+                    border: `1px solid ${alpha('#06b6d4', 0.4)}`,
+                  },
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: 3,
+                    padding: '2px',
+                    background: `linear-gradient(135deg, #06b6d4, #3b82f6)`,
+                    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                    WebkitMaskComposite: 'xor',
+                    maskComposite: 'exclude',
+                    opacity: 0,
+                    transition: 'opacity 0.4s ease',
+                  },
+                  '&:hover::before': {
+                    opacity: 0.6,
                   }
                 }}
               >
-                <Stack spacing={2}>
-                  <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+                {/* Decorative background blur circles */}
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: -50,
+                    right: -50,
+                    width: 150,
+                    height: 150,
+                    borderRadius: '50%',
+                    background: `radial-gradient(circle, ${alpha('#06b6d4', 0.15)} 0%, transparent 70%)`,
+                    filter: 'blur(40px)',
+                    pointerEvents: 'none',
+                  }}
+                />
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    bottom: -30,
+                    left: -30,
+                    width: 120,
+                    height: 120,
+                    borderRadius: '50%',
+                    background: `radial-gradient(circle, ${alpha('#3b82f6', 0.15)} 0%, transparent 70%)`,
+                    filter: 'blur(40px)',
+                    pointerEvents: 'none',
+                  }}
+                />
+
+                <Stack spacing={3} sx={{ position: 'relative', zIndex: 1 }}>
+                  <Stack direction="row" spacing={2.5} alignItems="center" flexWrap="wrap">
                     <Box
                       sx={{
-                        p: 1.5,
-                        borderRadius: 1.5,
-                        bgcolor: alpha(theme.palette.success.main, 0.8),
+                        p: 2,
+                        borderRadius: 2,
+                        background: `linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)`,
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        boxShadow: `0 8px 24px ${alpha('#06b6d4', 0.3)}`,
+                        transition: 'transform 0.3s ease',
+                        '&:hover': {
+                          transform: 'rotate(5deg) scale(1.05)',
+                        }
                       }}
                     >
-                      <WorkIcon sx={{ color: theme.palette.success.contrastText, fontSize: 32 }} />
+                      <BadgeIcon sx={{ color: '#fff', fontSize: 32 }} />
                     </Box>
-                    <Box flex={1}>
+
+                    <Box flex={1} sx={{ minWidth: 200 }}>
                       <Typography 
-                        variant="h6" 
+                        variant="h5" 
                         fontWeight={700}
-                        sx={{ color: theme.palette.success.main }}
-                        gutterBottom
+                        sx={{ 
+                          background: `linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)`,
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                          mb: 0.5
+                        }}
                       >
                         Currently Looking For
                       </Typography>
                       <Typography 
                         variant="body1" 
                         sx={{ 
-                          color: isDark 
-                            ? theme.palette.text.primary 
-                            : theme.palette.text.secondary 
+                          color: theme.palette.text.primary,
+                          fontWeight: 500,
+                          lineHeight: 1.6
                         }}
                       >
                         {about?.lookingFor}
                       </Typography>
                     </Box>
+
                     {about?.availability && (
                       <Chip 
                         label={about?.availability} 
-                        color="success"
                         sx={{ 
                           fontWeight: 600,
-                          fontSize: '0.875rem'
+                          fontSize: '0.875rem',
+                          height: 36,
+                          px: 2,
+                          background: `linear-gradient(135deg, ${alpha('#06b6d4', 0.15)} 0%, ${alpha('#3b82f6', 0.15)} 100%)`,
+                          border: `1.5px solid ${alpha('#06b6d4', 0.3)}`,
+                          color: '#06b6d4',
+                          '&:hover': {
+                            background: `linear-gradient(135deg, ${alpha('#06b6d4', 0.25)} 0%, ${alpha('#3b82f6', 0.25)} 100%)`,
+                          }
                         }}
                       />
                     )}
                   </Stack>
-                  <Button
+
+                  {/* <Button
                     variant="contained"
-                    color="success"
                     size="large"
                     href={`mailto:${contact?.email}`}
                     startIcon={<EmailIcon />}
                     sx={{
                       alignSelf: 'flex-start',
                       fontWeight: 600,
+                      fontSize: '1rem',
                       px: 4,
                       py: 1.5,
+                      borderRadius: 2,
+                      background: `linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)`,
+                      color: '#fff',
+                      textTransform: 'none',
+                      boxShadow: `0 4px 16px ${alpha('#06b6d4', 0.4)}`,
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
-                        transform: 'scale(1.05)',
-                        transition: 'transform 0.2s ease'
+                        transform: 'translateY(-2px) scale(1.02)',
+                        boxShadow: `0 8px 24px ${alpha('#06b6d4', 0.5)}`,
+                        background: `linear-gradient(135deg, #0891b2 0%, #2563eb 100%)`,
+                      },
+                      '&:active': {
+                        transform: 'translateY(0) scale(0.98)',
                       }
                     }}
                   >
                     Let's Connect
-                  </Button>
+                  </Button> */}
                 </Stack>
               </Box>
             </motion.div>
@@ -512,7 +641,13 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                                       sx={{
                                         bgcolor: alpha(theme.palette.primary.main, 0.1),
                                         color: theme.palette.primary.main,
-                                        fontWeight: 600
+                                        fontWeight: 600,
+                                        px: 1,
+                                        py: 0.5,
+                                        "& .MuiChip-icon": {
+                                          marginRight: 0.2,
+                                          marginLeft: 0.5
+                                        }
                                       }}
                                     />
                                   </Stack>
@@ -522,6 +657,44 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                                   <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8, mt: 1 }}>
                                     {exp?.description}
                                   </Typography>
+
+                                  {/* Tech Stack Section */}
+                                  
+                                  <Box sx={{ mt: 2 }}>
+                                    <Typography variant="caption" color="text.secondary" fontWeight={600} sx={{ mb: 1, display: 'block' }}>
+                                      Technologies Used:
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                      {experiencesStatic.technologies.map((tech, techIndex) => (
+                                        <Chip
+                                          key={techIndex}
+                                          label={tech}
+                                          icon ={
+                                            <img
+                                              src={getSkillIcon(tech)}
+                                              alt={tech}
+                                              style=
+                                                {{ width: 20, height: 20,
+                                                  filter: isDark
+                                                    ? "brightness(1.7) drop-shadow(0 0 1px rgba(255,255,255,0.4))"
+                                                    : "none"
+                                                }}
+                                            />
+                                          }
+                                          size="small"
+                                          sx={{
+                                            bgcolor: alpha(theme.palette.primary.main, 0.1),
+                                            color: theme.palette.primary.main,
+                                            fontWeight: 500,
+                                            fontSize: '0.75rem',
+                                            '&:hover': {
+                                              bgcolor: alpha(theme.palette.primary.main, 0.2),
+                                            }
+                                          }}
+                                        />
+                                      ))}
+                                    </Box>
+                                  </Box>
                                 </Box>
                               </Box>
                             </motion.div>
@@ -590,24 +763,58 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                                     }
                                   }}
                                 >
-                                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={1} flexWrap="wrap" gap={1}>
+                                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={1} flexWrap="wrap" gap={2}>
                                     <Typography variant="h6" fontWeight={700} color="secondary">
                                       {edu?.degree}
                                     </Typography>
                                     <Chip
-                                      icon={<CalendarTodayIcon sx={{ fontSize: 16 }} />}
+                                      icon={<CalendarTodayIcon sx={{ fontSize: 10 }} />}
                                       label={`${edu?.startYear} - ${edu?.endYear}`}
                                       size="small"
                                       sx={{
                                         bgcolor: alpha(theme.palette.secondary.main, 0.1),
                                         color: theme.palette.secondary.main,
-                                        fontWeight: 600
+                                        fontWeight: 600,
+                                        px: 1,
+                                        py: 0.5, 
+                                        // Icon spacing
+                                        "& .MuiChip-icon": {
+                                          marginRight: 0.2,
+                                          marginLeft: 0.5
+                                        }
                                       }}
                                     />
+
                                   </Stack>
                                   <Typography variant="subtitle1" color="text.secondary" fontWeight={600}>
                                     {edu?.institution}
                                   </Typography>
+                                  <Box sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    {edu?.cgpa && 
+                                    <Chip
+                                      label={`CGPA: ${edu?.cgpa}/${edu?.maxCgpa}`}
+                                      size="small"
+                                      sx={{
+                                        bgcolor: alpha(theme.palette.success.main, 0.1),
+                                        color: theme.palette.success.main,
+                                        fontWeight: 600,
+                                        fontSize: '0.8rem'
+                                      }}
+                                    />
+                                    }
+                                    {edu?.percent && 
+                                      <Chip
+                                        label={`Percentage: ${edu?.percent}`}
+                                        size="small"
+                                        sx={{
+                                          bgcolor: alpha(theme.palette.success.main, 0.1),
+                                          color: theme.palette.success.main,
+                                          fontWeight: 600,
+                                          fontSize: '0.8rem'
+                                        }}
+                                      />
+                                    }
+                                  </Box>
                                 </Box>
                               </Box>
                             </motion.div>

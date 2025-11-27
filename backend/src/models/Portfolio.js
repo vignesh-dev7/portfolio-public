@@ -70,7 +70,10 @@ const portfolioSchema = new mongoose.Schema({
       institution: String,
       degree: String,
       startYear: String,
-      endYear: String
+      endYear: String,
+      cgpa: String,
+      maxCgpa: String,
+      percent: String
     }
   ],
 
