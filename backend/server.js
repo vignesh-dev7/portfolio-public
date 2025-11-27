@@ -15,16 +15,20 @@ app.use(express.json());
 
 // Allow requests from your frontend origin
 app.use(cors({
-  origin: 'http://172.20.82.51:5173',  // frontend origin
+  origin: [
+    process.env.FRONTEND_URL,
+    "http://localhost:5173"
+  ],
   methods: ['GET','POST','PUT','DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// Routes
-app.use('/api/getAccountInfo', portfolioRoutes);
-//app.use('/api/users', userRoutes);
 
-app.listen(5000, "0.0.0.0", () => {
-  console.log("Server running on 0.0.0.0:5000");
+// Routes
+app.use('/api/portfolio', portfolioRoutes);
+
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
 

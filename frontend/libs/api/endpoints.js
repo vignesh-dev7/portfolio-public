@@ -1,3 +1,3 @@
 export const ACCOUNT_ENDPOINTS = {
-  GET_ACCOUNT_INFO: '/getAccountInfo',
+  GET_ACCOUNT_INFO: '/portfolio',
 };

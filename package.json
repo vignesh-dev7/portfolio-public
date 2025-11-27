@@ -12,7 +12,8 @@
     "dev:backend": "yarn workspace backend dev",
     "dev:frontend": "yarn workspace portfolio-ui dev",
     "build:portfolio-ui": "yarn workspace portfolio-ui build",
-    "preview:portfolio-ui": "yarn workspace portfolio-ui preview"
+    "preview:portfolio-ui": "yarn workspace portfolio-ui preview",
+    "deploy:portfolio-ui": "yarn workspace portfolio-ui build && aws s3 sync ./frontend/apps/portfolio-ui/dist s3://vigneshp-portfolio/ --delete"
   },
   "installConfig": {
     "pnp": true
