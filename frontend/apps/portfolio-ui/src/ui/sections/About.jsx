@@ -586,7 +586,7 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                                 background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
                                 color: 'white',
                                 border: `2px solid ${alpha(theme.palette.primary.light, 0.3)}`,
-                                boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.3)}`
+                                boxShadow: `0 0px 8px ${alpha(theme.palette.primary.main, 0.3)}`
                               }}
                             />
                           </Box>
@@ -719,7 +719,7 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                                 background: `linear-gradient(135deg, ${theme.palette.secondary.main} 0%, ${theme.palette.secondary.dark} 100%)`,
                                 color: 'white',
                                 border: `2px solid ${alpha(theme.palette.secondary.light, 0.3)}`,
-                                boxShadow: `0 4px 12px ${alpha(theme.palette.secondary.main, 0.3)}`
+                                boxShadow: `0 0px 8px ${alpha(theme.palette.secondary.main, 0.3)}`
                               }}
                             />
                           </Box>

@@ -367,7 +367,7 @@ const Projects = ({ projects }) => {
                               py: 2.5,
                               fontSize: '1.2rem',
                               fontWeight: 700,
-                              background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                              background: theme.palette.mode === "light" ? "linear-gradient(135deg, #1A73E8 0%, #6A4FE7 100%)" : "linear-gradient(135deg, #2962FF 0%, #7C4DFF 100%)",
                               color: 'white',
                               border: `2px solid ${alpha(theme.palette.primary.light, 0.3)}`,
                               boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.3)}`

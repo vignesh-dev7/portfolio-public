@@ -16,7 +16,7 @@ export const AppLoader = ({ children, loading, apiFailed, onRetry }) => {
   const [signIndex, setSignIndex] = useState(0);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowLoader(false), 3800);
+    const timer = setTimeout(() => setShowLoader(false), 4100);
     return () => clearTimeout(timer);
   }, []);
 
