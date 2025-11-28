@@ -173,7 +173,7 @@ export default function LeftNavbar() {
               "&:hover": { opacity: 1 },
             }}
           >
-            Software Engineer | MERN + AWS
+            Software Engineer II • MERN • AWS
           </Typography>
         </motion.div>
 

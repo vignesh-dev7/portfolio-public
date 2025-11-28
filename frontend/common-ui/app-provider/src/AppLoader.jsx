@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Box, Typography } from "@mui/material";
+import { ApiError } from "./ApiError";
 
-export const AppLoader = ({ children }) => {
+export const AppLoader = ({ children, loading, apiFailed, onRetry }) => {
   const [showLoader, setShowLoader] = useState(true);
 
   // WORD-BY-WORD TYPING EFFECT
-  const welcomeText = "Welcome to my creative universe".split(" ");
-  const taglineText = "Clean code. Clear vision. Creative mind".split(" ");
+  const welcomeText = "Crafting digital experiences with precision".split(" ");
+  const taglineText = "Full Stack Logic. Frontend Magic. Backend Power.".split(" ");
   const signatureText = "- Vignesh P".split("");
 
   const [welcomeIndex, setWelcomeIndex] = useState(0);
@@ -55,7 +56,7 @@ export const AppLoader = ({ children }) => {
     }
   }, [signIndex, tagIndex]);
 
-  if (showLoader) {
+  if (showLoader || loading) {
     return (
       <Box
         display="flex"
@@ -156,6 +157,11 @@ export const AppLoader = ({ children }) => {
         />
       </Box>
     );
+  }
+
+  // CONDITION 2 → API failed AFTER loader animation
+  if (apiFailed) {
+    return <ApiError onRetry={onRetry} />;
   }
 
   return <>{children}</>;

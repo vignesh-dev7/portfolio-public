@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { 
   Typography, 
   Grid, 
@@ -9,7 +9,8 @@ import {
   alpha,
   Link,
   IconButton,
-  TextField 
+  TextField,
+  CircularProgress
 } from "@mui/material";
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -22,10 +23,16 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PublicIcon from '@mui/icons-material/Public';
 import { motion } from "framer-motion";
 import WorkIcon from '@mui/icons-material/Work';
+import { useForm } from "react-hook-form";
+import { sendContactMail } from '@libs/api';
 
 const Contact = ({ contact, socialLinks }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [error, setError] = useState(false);
 
   // Hardcoded additional info
   const additionalInfo = {
@@ -36,6 +43,26 @@ const Contact = ({ contact, socialLinks }) => {
     timezone: "IST (GMT+5:30)",
     bestTime: "Mon-Fri, 9 AM - 6 PM IST"
   };
+
+  const onSubmit = async (data) => {
+    setLoading(true);
+    setSuccessMsg("");
+    try {
+      const res = await sendContactMail(data);
+      if (res.success) {
+        setError(false);
+        setSuccessMsg("Thanks! I received your message — I’ll get back to you soon.");
+        reset();
+      }
+    } catch (err) {
+      console.error(err);
+      setError(true);
+      setSuccessMsg("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   // Animation variants
   const containerVariants = {
@@ -482,57 +509,121 @@ const Contact = ({ contact, socialLinks }) => {
 
 
                   {/* Form */}
-                  <Stack spacing={2.8} maxWidth="600px">
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight={600} mb={0.5}>
-                        Name
-                      </Typography>
-                      <TextField fullWidth placeholder="How should I address you" variant="outlined" />
-                    </Box>
+                  <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <Stack spacing={2.8} maxWidth="600px">
 
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight={600} mb={0.5}>
-                        Email Address
-                      </Typography>
-                      <TextField
-                        fullWidth
-                        placeholder="your@email.com"
-                        variant="outlined"
-                        InputProps={{
-                          endAdornment: <EmailIcon sx={{ opacity: 0.4, mr: 1 }} />,
-                        }}
-                      />
-                    </Box>
+                      {/* Name */}
+                      <Box>
+                        <Typography variant="subtitle2" fontWeight={600} mb={0.5}>
+                          Name
+                        </Typography>
 
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight={600} mb={0.5}>
-                        Message
-                      </Typography>
-                      <TextField
-                        fullWidth
-                        multiline
-                        minRows={4}
-                        placeholder="Let's talk! Type your message..."
-                        variant="outlined"
-                      />
-                    </Box>
+                        <TextField
+                          fullWidth
+                          placeholder="How should I address you"
+                          variant="outlined"
+                          error={!!errors.name}
+                          disabled={loading}
+                          helperText={errors.name?.message}
+                          {...register("name", {
+                            required: "Name is required",
+                            minLength: {
+                              value: 2,
+                              message: "Name must be at least 2 characters",
+                            },
+                          })}
+                        />
+                      </Box>
 
-                    {/* Buttons */}
-                    <Stack direction="row" spacing={2} mt={2} sx={{ justifyContent: "flex-end" }}>
-                      <Button
-                        variant="outlined"
-                        sx={{
-                          py: 1.3,
-                          px: 4,
-                          borderRadius: 2,
-                          fontWeight: 600,
-                          textTransform: "none",
-                        }}
+                      {/* Email */}
+                      <Box>
+                        <Typography variant="subtitle2" fontWeight={600} mb={0.5}>
+                          Email Address
+                        </Typography>
+
+                        <TextField
+                          fullWidth
+                          placeholder="your@email.com"
+                          variant="outlined"
+                          disabled={loading}
+                          InputProps={{
+                            endAdornment: <EmailIcon sx={{ opacity: 0.4, mr: 1 }} />,
+                          }}
+                          error={!!errors.email}
+                          helperText={errors.email?.message}
+                          {...register("email", {
+                            required: "Email is required",
+                            pattern: {
+                              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                              message: "Enter a valid email address",
+                            },
+                          })}
+                        />
+                      </Box>
+
+                      {/* Message */}
+                      <Box>
+                        <Typography variant="subtitle2" fontWeight={600} mb={0.5}>
+                          Message
+                        </Typography>
+
+                        <TextField
+                          fullWidth
+                          multiline
+                          minRows={4}
+                          disabled={loading}
+                          placeholder="Let's talk! Type your message..."
+                          variant="outlined"
+                          error={!!errors.message}
+                          helperText={errors.message?.message}
+                          {...register("message", {
+                            required: "Message is required",
+                            minLength: {
+                              value: 10,
+                              message: "Message must be at least 10 characters",
+                            },
+                          })}
+                        />
+                      </Box>
+
+                      {/* Buttons */}
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={2}
+                        mt={2}
+                        sx={{ justifyContent: "flex-end" }}
                       >
-                        Submit
-                      </Button>
+                        {successMsg && (
+                          <Typography 
+                            sx={{ 
+                              color: error ? "error.main" : "success.main", 
+                              fontWeight: 600,
+                              fontSize: "0.9rem"
+                            }}
+                          >
+                            {successMsg}
+                          </Typography>
+                        )}
+
+                        <Button
+                          type="submit"
+                          variant="outlined"
+                          disabled={loading}
+                          sx={{
+                            py: 1.3,
+                            px: 4,
+                            borderRadius: 2,
+                            fontWeight: 600,
+                            textTransform: "none",
+                            opacity: loading ? 0.6 : 1,
+                          }}
+                        >
+                          {loading ? <CircularProgress size={22} /> : "Submit"}
+                        </Button>
+                      </Stack>
                     </Stack>
-                  </Stack>
+                  </form>
                 </Box>
               </Grid>
             </Grid>

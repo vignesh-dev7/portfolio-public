@@ -4,6 +4,7 @@ import connectDB from './src/config/db.js';
 //import userRoutes from './src/routes/userRoutes.js';
 import portfolioRoutes from './src/routes/portfolioRoutes.js';
 import cors from 'cors';
+import contactRoute from './src/routes/contact.js';
 
 
 dotenv.config();
@@ -17,6 +18,8 @@ app.use(express.json());
 app.use(cors({
   origin: [
     process.env.FRONTEND_URL,
+    process.env.FRONTEND_URL_WWW,
+    process.env.FRONTEND_URL_LOCAL,
     "http://localhost:5173"
   ],
   methods: ['GET','POST','PUT','DELETE'],
@@ -26,7 +29,7 @@ app.use(cors({
 
 // Routes
 app.use('/api/portfolio', portfolioRoutes);
-
+app.use("/api/contact", contactRoute);
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);

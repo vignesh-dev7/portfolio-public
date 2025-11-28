@@ -12,6 +12,7 @@
     "@common-ui/theme-provider": "workspace:*",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@libs/api": "workspace:*",
     "@mui/icons-material": "^5.16.7",
     "@mui/material": "^5.16.7",
     "framer-motion": "^10.12.16",
@@ -20,6 +21,7 @@
     "react": "^18.3.1",
     "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.53.0",
     "react-router-dom": "^6.26.2",
     "react-router-hash-link": "^2.4.3",
     "react-swipeable": "^7.0.2"
