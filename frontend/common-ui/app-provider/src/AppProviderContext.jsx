@@ -1,4 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
+import { useTheme } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { getAccountInfo } from '@libs/api';
 import { BrowserRouter } from "react-router-dom";
 import { AppLoader } from "./AppLoader";
@@ -10,6 +12,14 @@ export const AppProvider = ({ children }) => {
   const [accounts, setAccounts] = useState([]);
   const [apiFailed, setApiFailed] = useState(false);
   const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  // Breakpoints using MUI standards
+  const isXs = useMediaQuery(theme.breakpoints.down("sm"));      // <600px
+  const isSm = useMediaQuery(theme.breakpoints.down("md"));      // <900px
+  const isMd = useMediaQuery(theme.breakpoints.down("lg"));      // <1200px
+
+  const isSmallScreen = isXs || isSm; // Mobile + Tablets <900px
+  const isMediumScreen = isMd && !isSm;
 
   const fetchAccounts = async () => {
     try {
@@ -30,7 +40,7 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   return (
-    <AppContext.Provider value={{ accounts }}>
+    <AppContext.Provider value={{ accounts, isSmallScreen, isMediumScreen, isXs, isSm, isMd }}>
       <BrowserRouter>
         <AppLoader loading={loading} apiFailed={apiFailed} onRetry={fetchAccounts}>
           {children}

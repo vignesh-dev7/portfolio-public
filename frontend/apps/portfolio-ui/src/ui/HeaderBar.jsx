@@ -1,47 +1,68 @@
-import React, { useMemo } from "react";
-import { Box, IconButton, Stack, Typography, useTheme, Tooltip } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import {
+  Box,
+  IconButton,
+  Stack,
+  Typography,
+  useTheme,
+  Tooltip,
+  Drawer,
+} from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useThemeContext, ThemeToggleButton } from "@common-ui/theme-provider";
-// Icons
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import PsychologyIcon from '@mui/icons-material/Psychology';
-import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
-import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
-import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
-import ContactMailOutlinedIcon from "@mui/icons-material/ContactMailOutlined";
+import { useThemeContext } from "@common-ui/theme-provider";
+
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import DescriptionIcon from "@mui/icons-material/Description";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import PersonPinIcon from '@mui/icons-material/PersonPin';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import PersonIcon from '@mui/icons-material/Person';
-import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import MenuIcon from "@mui/icons-material/Menu";
+import PersonIcon from "@mui/icons-material/Person";
+import PsychologyIcon from "@mui/icons-material/Psychology";
+import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import TextSnippetIcon from "@mui/icons-material/TextSnippet";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+
 import { useAppContext } from "@common-ui/app-provider";
+import LeftNavbar from "./LeftNavbar";
 
 const sectionMeta = {
   about: { title: "About Me", icon: <PersonIcon fontSize="medium" /> },
   skills: { title: "Skills & Expertise", icon: <PsychologyIcon fontSize="medium" /> },
   projects: { title: "Projects", icon: <FolderOpenOutlinedIcon fontSize="medium" /> },
   resumeViewer: { title: "Resume Viewer", icon: <TextSnippetIcon fontSize="medium" /> },
-  education: { title: "Education", icon: <SchoolOutlinedIcon fontSize="medium" /> },
   contact: { title: "Contact", icon: <MailOutlineIcon fontSize="medium" /> },
+  portfolioArchitecture: {
+    title: "Portfolio Architecture",
+    icon: <AutoAwesomeIcon fontSize="medium" />,
+  },
 };
 
 export default function HeaderBar() {
   const location = useLocation();
   const section = location.pathname.replace("/", "") || "about";
+
   const theme = useTheme();
   const navigate = useNavigate();
-  const { accounts } = useAppContext();
-  const { socialLinks } = accounts;
-  const isDark = theme.palette.mode === "dark";
   const { toggleTheme } = useThemeContext();
+
+  const { accounts, isSmallScreen } = useAppContext();
+  const { socialLinks } = accounts;
+
+  const isDark = theme.palette.mode === "dark";
+
   const { title, icon } = useMemo(() => {
-    return sectionMeta[section] || { title: "Portfolio", icon: <InfoOutlinedIcon fontSize="small" /> };
+    return (
+      sectionMeta[section] || {
+        title: "Portfolio",
+        icon: <PersonIcon fontSize="small" />,
+      }
+    );
   }, [section]);
+
+  // Drawer state
+  const [openNav, setOpenNav] = useState(false);
 
   return (
     <Box
@@ -58,6 +79,27 @@ export default function HeaderBar() {
       }}
     >
       <Stack direction="row" alignItems="center" spacing={1}>
+        {/* Mobile menu icon */}
+        {isSmallScreen && (
+          <IconButton
+            onClick={() => setOpenNav(true)}
+            color="inherit"
+            size="small"
+            sx={{
+              border: `1px solid ${theme.palette.divider}`,
+              bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
+              "&:hover": {
+                bgcolor: isDark
+                  ? "rgba(255,255,255,0.1)"
+                  : "rgba(0,0,0,0.1)",
+              },
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
+
+        {/* Header Title */}
         <Tooltip title={title}>
           <IconButton
             onClick={() => navigate(`/${section || "about"}`)}
@@ -89,20 +131,32 @@ export default function HeaderBar() {
         </motion.div>
       </Stack>
 
+      {/* Right Icons */}
       <Stack direction="row" alignItems="center" spacing={1.5}>
-        <IconButton component="a" href={socialLinks?.github} target="_blank" color="inherit" size="small">
+        <IconButton
+          component="a"
+          href={socialLinks?.github}
+          target="_blank"
+          color="inherit"
+          size="small"
+        >
           <GitHubIcon fontSize="medium" />
         </IconButton>
 
-        <IconButton component="a" href={socialLinks?.linkedin} target="_blank" color="inherit" size="small">
+        <IconButton
+          component="a"
+          href={socialLinks?.linkedin}
+          target="_blank"
+          color="inherit"
+          size="small"
+        >
           <LinkedInIcon fontSize="medium" />
         </IconButton>
 
-        {/* <IconButton component="a" href="/resume.pdf" target="_blank" color="inherit" size="small">
-          <DescriptionIcon fontSize="small" />
-        </IconButton> */}
-
-        <IconButton onClick={(e) => toggleTheme(e)} color="inherit" size="small"
+        <IconButton
+          onClick={(e) => toggleTheme(e)}
+          color="inherit"
+          size="small"
           sx={{
             border: `1px solid ${theme.palette.divider}`,
             bgcolor: isDark
@@ -122,6 +176,21 @@ export default function HeaderBar() {
           )}
         </IconButton>
       </Stack>
+
+      {/* Drawer for mobile/tablets */}
+      <Drawer
+        anchor="left"
+        open={openNav}
+        onClose={() => setOpenNav(false)}
+        PaperProps={{
+          sx: {
+            width: 240,
+            bgcolor: theme.palette.background.default,
+          },
+        }}
+      >
+        <LeftNavbar onNavigate={() => setOpenNav(false)} />
+      </Drawer>
     </Box>
   );
 }

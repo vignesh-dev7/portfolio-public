@@ -133,7 +133,7 @@ const Projects = ({ projects }) => {
 
   // Calculate stats
   const totalProjects = projects?.length || 0;
-  const completedProjects = projects?.filter(p => (p?.status?.toLowerCase() === 'completed' || p?.status?.toLowerCase() === 'in production'))?.length || 0;
+  const completedProjects = projects?.filter(p => (p?.status?.toLowerCase() === 'completed' || p?.status?.toLowerCase() === 'live'))?.length || 0;
   const activeProjects = projects?.filter(p => {
     const status = p?.status?.toLowerCase() || '';
     return status.includes('active') || status.includes('progress');

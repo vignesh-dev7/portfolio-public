@@ -13,11 +13,7 @@ import {
   CardContent,
   alpha
 } from "@mui/material";
-import GitHubIcon from '@mui/icons-material/GitHub';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import EmailIcon from '@mui/icons-material/Email';
-import PhoneIcon from '@mui/icons-material/Phone';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+
 import WorkIcon from '@mui/icons-material/Work';
 import LanguageIcon from '@mui/icons-material/Language';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
@@ -29,6 +25,8 @@ import { motion } from "framer-motion";
 import { getSkillIcon } from "../../util/skillIcons.js";
 import BadgeIcon from '@mui/icons-material/Badge';
 import ChromeReaderModeIcon from '@mui/icons-material/ChromeReaderMode';
+import ws from '../../assets/svgIcons/ws.svg';
+
 
 const About = ({ about, socialLinks, contact, experiences, education }) => {
 
@@ -654,7 +652,7 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                                   <Typography variant="subtitle1" color="text.secondary" fontWeight={600} gutterBottom>
                                     {exp?.company}
                                   </Typography>
-                                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8, mt: 1 }}>
+                                  <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "pre-line", lineHeight: 1.6 }}>
                                     {exp?.description}
                                   </Typography>
 
@@ -671,7 +669,7 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                                           label={tech}
                                           icon ={
                                             <img
-                                              src={getSkillIcon(tech)}
+                                              src={tech === "AWS" ? ws :getSkillIcon(tech)}
                                               alt={tech}
                                               style=
                                                 {{ width: 20, height: 20,
@@ -686,6 +684,7 @@ const About = ({ about, socialLinks, contact, experiences, education }) => {
                                             bgcolor: alpha(theme.palette.primary.main, 0.1),
                                             color: theme.palette.primary.main,
                                             fontWeight: 500,
+                                            p: 1,
                                             fontSize: '0.75rem',
                                             '&:hover': {
                                               bgcolor: alpha(theme.palette.primary.main, 0.2),

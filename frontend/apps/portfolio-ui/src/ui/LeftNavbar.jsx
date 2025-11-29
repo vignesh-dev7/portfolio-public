@@ -8,21 +8,23 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
-import { useThemeContext } from "@common-ui/theme-provider";
 import { useMemo } from "react";
 
-import PersonIcon from '@mui/icons-material/Person';
-import PsychologyIcon from '@mui/icons-material/Psychology';
+import PersonIcon from "@mui/icons-material/Person";
+import PsychologyIcon from "@mui/icons-material/Psychology";
 import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import TextSnippetIcon from "@mui/icons-material/TextSnippet";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+
+import { useAppContext } from "@common-ui/app-provider";
 
 // ---------------- Animations ---------------- //
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.10 },
+    transition: { staggerChildren: 0.1 },
   },
 };
 
@@ -40,19 +42,26 @@ const navItems = [
   { label: "About", path: "/about", icon: <PersonIcon /> },
   { label: "Skills", path: "/skills", icon: <PsychologyIcon /> },
   { label: "Projects", path: "/projects", icon: <FolderOpenOutlinedIcon /> },
+  { label: "Portfolio Architecture", path: "/portfolioArchitecture", icon: <AutoAwesomeIcon /> },
   { label: "Resume Viewer", path: "/resumeViewer", icon: <TextSnippetIcon /> },
   { label: "Contact", path: "/contact", icon: <MailOutlineIcon /> },
 ];
 
 // ---------------- Component ---------------- //
-export default function LeftNavbar() {
+export default function LeftNavbar({ onNavigate = () => {} }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+
+  // From AppProvider
+  const { isSmallScreen } = useAppContext();
 
   const lightProfileImg = "https://works-stuffs.s3.ap-southeast-2.amazonaws.com/ProfileImg.png";
   const darkProfileImg = "https://works-stuffs.s3.ap-southeast-2.amazonaws.com/ProfileImg.png";
 
   const profileImage = isDark ? darkProfileImg : lightProfileImg;
+
+  // Hide navbar on small screens
+  /* if (isSmallScreen) return null; */
 
   const navItemStyle = useMemo(
     () => ({
@@ -78,7 +87,7 @@ export default function LeftNavbar() {
         flexDirection: "column",
       }}
     >
-      {/* MAIN CONTENT AREA (GROWS) */}
+      {/* MAIN CONTENT AREA */}
       <Box
         sx={{
           flexGrow: 1,
@@ -116,6 +125,7 @@ export default function LeftNavbar() {
             }}
           />
         </motion.div>
+
         <motion.div variants={itemVariants}>
           <Typography
             variant="h6"
@@ -181,16 +191,21 @@ export default function LeftNavbar() {
         <Stack spacing={1} sx={{ width: "100%", px: 1, pt: 1 }}>
           {navItems.map((item) => {
             const activeColor = isDark ? "#38BDF8" : "#0284C7";
-            const hoverBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
+            const hoverBg = isDark
+              ? "rgba(255,255,255,0.06)"
+              : "rgba(0,0,0,0.05)";
             const activeBg = "rgba(56, 189, 248, 0.15)";
 
             return (
               <motion.div key={item.path} variants={itemVariants}>
                 <NavLink
                   to={item.path}
+                  onClick={onNavigate}
                   style={({ isActive }) => ({
                     ...navItemStyle,
-                    color: isActive ? activeColor : theme.palette.text.primary,
+                    color: isActive
+                      ? activeColor
+                      : theme.palette.text.primary,
                     backgroundColor: isActive ? activeBg : "transparent",
                   })}
                 >
@@ -201,7 +216,10 @@ export default function LeftNavbar() {
                           ? {
                               scale: 1.08,
                               x: 3,
-                              transition: { type: "spring", stiffness: 260 },
+                              transition: {
+                                type: "spring",
+                                stiffness: 260,
+                              },
                             }
                           : {}
                       }
@@ -264,7 +282,7 @@ export default function LeftNavbar() {
         </Stack>
       </Box>
 
-      {/* FOOTER — Sticks to Bottom */}
+      {/* FOOTER */}
       <motion.div variants={itemVariants}>
         <Box sx={{ textAlign: "center", mt: "auto", py: 2 }}>
           <Divider

@@ -8,6 +8,7 @@ import Projects from "./sections/Projects";
 import Contact from "./sections/Contact";
 import ResumeViewer from "./sections/ResumeViewer";
 import BackToTop from "./BackToTop";
+import PortfolioArchitecture from "./sections/PortfolioArchitecture";
 import { useAppContext } from "@common-ui/app-provider";
 /* import Experience from "./sections/Experience";
 import Education from "./sections/Education"; */
@@ -76,6 +77,8 @@ export default function Portfolio() {
                 return <Contact contact={accounts?.contact} socialLinks={accounts?.socialLinks}/>;
             case "resumeViewer":
                 return <ResumeViewer socialLinks={accounts?.socialLinks}/>;
+            case "portfolioArchitecture":
+                return <PortfolioArchitecture />;
             default:
                 return <About />;
         }
