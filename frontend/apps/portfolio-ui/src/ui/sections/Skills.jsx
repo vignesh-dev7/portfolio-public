@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useId  } from "react";
+import React, { useState, useMemo, useId } from "react";
 import { 
   Typography, 
   Box, 
@@ -95,8 +95,6 @@ const Skills = ({ skills }) => {
     return all;
   }, [skills, selectedCategories]);
 
-  //console.log(`filteredSkills: ${JSON.stringify(filteredSkills, null, 2)}`);
-  
   // ------------------------------------------------------------
   // Hexagon Component
   // ------------------------------------------------------------
@@ -109,7 +107,6 @@ const Skills = ({ skills }) => {
     const uniqueId = useId();
     const gradientId = `grad-${skill._id}-${uniqueId}`;
   
-    //console.log(`skill: ${JSON.stringify(skill, null, 2)}`);
     return (
         <Box
           onMouseEnter={() => setIsHovered(true)}
@@ -254,14 +251,13 @@ const Skills = ({ skills }) => {
     );
   };
 
-
   // ------------------------------------------------------------
   // Render
   // ------------------------------------------------------------
   if (!skills || Object.keys(skills).length === 0) {
     return (
       <section>
-        <Stack direction="row" spacing={2} alignItems="center" mb={4}>
+        <Stack direction="row" spacing={2} alignItems="center" mb={4} justifyContent="center">
           <Box
             sx={{
               p: 1.5,
@@ -286,78 +282,82 @@ const Skills = ({ skills }) => {
 
   return (
     <section>
-      <motion.div variants={containerVariants} initial="hidden" whileInView="visible">
-        {/* Category Badges */}
-        <Grid container spacing={4} sx={{ width: '95%' }}>
-          <Grid item xs={12}>
-            <motion.div  initial="hidden" animate="visible" variants={itemVariants}>
-              <Stack direction="row" spacing={1.5} flexWrap="wrap" justifyContent="center" mb={4}>
-                {["frontend", "backend", "devops", "other"].map((cat) => {
-                  const info = getCategoryInfo(cat);
-                  if (info.count === 0) return null;
-                  const selected = selectedCategories.includes(cat);
-                  const IconSrc = getSkillIcon(cat); // returns SVG URL
-                  return (
-                    <>
-                      <Chip
-                        key={cat}
-                        icon={
-                          <img
-                            src={IconSrc}
-                            alt={cat}
-                            style=
-                              {{ width: 20, height: 20,
-                                filter: isDark
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        // Changed amount to 0.1 and added margin to trigger earlier on mobile
+        viewport={{ once: true, amount: 0.1, margin: "0px 0px -50px 0px" }} 
+      >
+        {/* Main Container Fix: maxWidth="xl" and mx="auto" to fill width */}
+        <Box sx={{ maxWidth: "xl", mx: "auto", width: "95%", px: { xs: 2, sm: 3, md: 4 } }}>
+            
+            {/* Removed width: '95%' restriction so it fills container */}
+            <Grid container spacing={4} justifyContent="center">
+            <Grid item xs={12}>
+                <motion.div initial="hidden" animate="visible" variants={itemVariants}>
+                  <Stack direction="row" spacing={{ xs: 1, sm: 2 }} flexWrap="wrap" useFlexGap justifyContent="center" mb={4}>
+                      {["frontend", "backend", "devops", "other"].map((cat) => {
+                      const info = getCategoryInfo(cat);
+                      if (info.count === 0) return null;
+                      const selected = selectedCategories.includes(cat);
+                      const IconSrc = getSkillIcon(cat); 
+                      return (
+                          <Chip
+                          key={cat}
+                          icon={
+                              <img
+                              src={IconSrc}
+                              alt={cat}
+                              style={{ 
+                                  width: 20, 
+                                  height: 20,
+                                  filter: isDark
                                   ? "brightness(1.7) drop-shadow(0 0 1px rgba(255,255,255,0.4))"
                                   : "none"
                               }}
+                              />
+                          }
+                          label={`${info.label} (${info.count})`}
+                          onClick={() => toggleCategory(cat)}
+                          sx={{
+                              px: 2,
+                              py: 2,
+                              fontWeight: 600,
+                              bgcolor: selected ? alpha(info.color, 0.2) : alpha(theme.palette.action.hover, 0.05),
+                              color: selected ? info.color : theme.palette.text.secondary,
+                              border: selected ? `2px solid ${info.color}` : "2px solid transparent",
+                              cursor: "pointer",
+                          }}
                           />
-                        }
-                        label={`${info.label} (${info.count})`}
-                        onClick={() => toggleCategory(cat)}
-                        sx={{
-                          px: 2,
-                          py: 2,
-                          fontWeight: 600,
-                          bgcolor: selected ? alpha(info.color, 0.2) : alpha(theme.palette.action.hover, 0.05),
-                          color: selected ? info.color : theme.palette.text.secondary,
-                          border: selected ? `2px solid ${info.color}` : "2px solid transparent",
-                          cursor: "pointer",
-                          "& .MuiChip-icon": {
-                            
-                          },
-                        }}
-                      />
-                    </>
-                    
-                  );
-                })}
-              </Stack>
-            </motion.div>
+                      );
+                      })}
+                  </Stack>
+                </motion.div>
 
-            {/* Hexagon Grid (Corrected & Stable) */}
-            <Grid container spacing={3} justifyContent="center" alignItems="center">
-              {filteredSkills?.length > 0 ? (
-                filteredSkills.map((skill) => (
-                  <Grid key={skill._id} item xs="auto">
-                    <motion.div
-                      variants={itemVariants}
-                      initial="hidden"
-                      animate="visible"
-                    >
-                      <HexagonBadge skill={skill} />
-                    </motion.div>
-                  </Grid>
-                ))
-              ) : (
-                <Grid item xs={12}>
-                  <Typography>No skills found</Typography>
+                {/* Hexagon Grid */}
+                <Grid container spacing={3} justifyContent="center" alignItems="center">
+                {filteredSkills?.length > 0 ? (
+                    filteredSkills.map((skill) => (
+                    <Grid key={skill._id} item xs="auto">
+                        <motion.div
+                        variants={itemVariants}
+                        initial="hidden"
+                        animate="visible"
+                        >
+                        <HexagonBadge skill={skill} />
+                        </motion.div>
+                    </Grid>
+                    ))
+                ) : (
+                    <Grid item xs={12}>
+                    <Typography align="center">No skills found</Typography>
+                    </Grid>
+                )}
                 </Grid>
-              )}
             </Grid>
-          </Grid>
-        </Grid>
-
+            </Grid>
+        </Box>
       </motion.div>
     </section>
   );

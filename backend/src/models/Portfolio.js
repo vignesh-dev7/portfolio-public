@@ -83,7 +83,8 @@ const portfolioSchema = new mongoose.Schema({
     twitter: String,
     instagram: String,
     email: String,
-    resumeLink: String
+    resumeLink: String,
+    rsSize: String
   },
 
   contact: {

@@ -49,8 +49,10 @@ export default function HeaderBar() {
 
   const { accounts, isSmallScreen } = useAppContext();
   const { socialLinks } = accounts;
-
   const isDark = theme.palette.mode === "dark";
+  const sidebarBg = isDark
+  ? "linear-gradient(180deg, #1c1c24ff 0%, #222228ff 50%, #09090b 100%)"
+  : "linear-gradient(180deg, #f9f0f0ff 0%, #a6a6f0ff 100%)";
 
   const { title, icon } = useMemo(() => {
     return (
@@ -100,7 +102,7 @@ export default function HeaderBar() {
         )}
 
         {/* Header Title */}
-        <Tooltip title={title}>
+        {!isSmallScreen &&
           <IconButton
             onClick={() => navigate(`/${section || "about"}`)}
             color="inherit"
@@ -117,7 +119,7 @@ export default function HeaderBar() {
           >
             {icon}
           </IconButton>
-        </Tooltip>
+        }
 
         <motion.div
           key={title}
@@ -125,7 +127,11 @@ export default function HeaderBar() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <Typography variant="h6" fontWeight={600}>
+          <Typography 
+            variant="h6" 
+            fontSize={isSmallScreen ? "1rem" : "1.25rem"} 
+            noWrap
+          >
             {title}
           </Typography>
         </motion.div>
@@ -184,8 +190,11 @@ export default function HeaderBar() {
         onClose={() => setOpenNav(false)}
         PaperProps={{
           sx: {
-            width: 240,
-            bgcolor: theme.palette.background.default,
+            width: 245,
+            background: sidebarBg,        // <-- APPLY SAME SIDE NAV COLORS
+            borderRight: `1px solid ${theme.palette.divider}`,
+            overflowY: "auto",
+            overflowX: "hidden",
           },
         }}
       >

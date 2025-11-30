@@ -1,4 +1,3 @@
-// ResumeViewer.jsx (updated - paste over your current file)
 import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
@@ -20,7 +19,6 @@ import {
 
 import {
   Download,
-  Share2,
   Maximize2,
   X,
   Eye,
@@ -32,14 +30,6 @@ import { motion } from "framer-motion";
 import { useSwipeable } from "react-swipeable";
 import { pdfToImages } from "../../util/pdfToImages";
 
-/**
- * ResumeViewer
- * - Normal preview: overlay left/right arrow icons (no bottom Prev/Next buttons)
- * - Fullscreen: click cycles zoom in steps (1 -> 1.25 -> 1.5 ... -> max -> reset)
- * - Double-click resets zoom to 1
- * - Drag-to-pan when zoom > 1
- * - Swipe/keyboard navigation in fullscreen
- */
 const ResumeViewer = ({ socialLinks }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -52,10 +42,13 @@ const ResumeViewer = ({ socialLinks }) => {
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
 
   // Fullscreen zoom + drag
-  const zoomSteps = [1, 1.12, 1.25, 1.45, 1.65, 1.85, 2];
+  const zoomSteps = [1, 1.5, 1.75]; // Adjusted steps
   const [zoomFS, setZoomFS] = useState(1);
   const [dragFS, setDragFS] = useState({ x: 0, y: 0 });
+  
+  // Refs for drag logic
   const draggingRef = useRef(false);
+  const lastMouseRef = useRef({ x: 0, y: 0 });
 
   const [docInfo, setDocInfo] = useState({
     fileName: "",
@@ -68,7 +61,6 @@ const ResumeViewer = ({ socialLinks }) => {
     ? alpha(theme.palette.background.paper, 0.9)
     : "#F1F5F9";
 
-  // Load PDF pages -> pdfToImages returns array of image URLs
   useEffect(() => {
     if (socialLinks?.resumeLink) {
       pdfToImages(socialLinks.resumeLink, 2.4).then(setPages).catch(err => {
@@ -77,14 +69,12 @@ const ResumeViewer = ({ socialLinks }) => {
     }
   }, [socialLinks]);
 
-  // Page navigation
   const nextPage = () =>
     setCurrentPage((p) => (p < pages.length - 1 ? p + 1 : p));
 
   const prevPage = () =>
     setCurrentPage((p) => (p > 0 ? p - 1 : p));
 
-  // Fullscreen open/close
   const openFullscreen = () => {
     setFullscreenOpen(true);
     resetZoomFS();
@@ -95,15 +85,15 @@ const ResumeViewer = ({ socialLinks }) => {
     resetZoomFS();
   };
 
-  // Zoom: stepwise increase on single click, reset on double-click
-  const stepZoom = () => {
-    // find current index in steps
-    const idx = zoomSteps.indexOf(Number(zoomFS)) >= 0 ? zoomSteps.indexOf(Number(zoomFS)) : 0;
+  // --- ZOOM LOGIC ---
+  const stepZoom = (e) => {
+    e.stopPropagation(); // Prevent clicking through to other elements
+    const idx = zoomSteps.indexOf(zoomFS) >= 0 ? zoomSteps.indexOf(zoomFS) : 0;
     const nextIdx = idx + 1;
+    
     if (nextIdx >= zoomSteps.length) {
-      // cycle back to 1
-      setZoomFS(1);
-      setDragFS({ x: 0, y: 0 });
+      // Reset if max reached
+      resetZoomFS();
     } else {
       setZoomFS(zoomSteps[nextIdx]);
     }
@@ -114,39 +104,54 @@ const ResumeViewer = ({ socialLinks }) => {
     setDragFS({ x: 0, y: 0 });
   };
 
-  // Drag inside zoom
+  // --- DRAG LOGIC ---
   const onMouseDown = (e) => {
-    if (zoomFS === 1) return;
+    // Only drag if zoomed in
+    if (zoomFS <= 1) return;
+    
+    e.preventDefault(); // STOP browser native image dragging
     draggingRef.current = true;
+    lastMouseRef.current = { x: e.clientX, y: e.clientY };
     e.currentTarget.style.cursor = "grabbing";
   };
 
   const onMouseUp = (e) => {
     draggingRef.current = false;
-    e.currentTarget.style.cursor = zoomFS === 1 ? "zoom-in" : "grab";
+    e.currentTarget.style.cursor = zoomFS > 1 ? "grab" : "zoom-in";
   };
 
   const onMouseMove = (e) => {
     if (!draggingRef.current) return;
-    // movementX/movementY are available on native mouse events; if using synthetic,
-    // ensure this handler receives nativeEvent or attach to element via ref.
-    const mvX = e.movementX ?? (e.nativeEvent && e.nativeEvent.movementX) ?? 0;
-    const mvY = e.movementY ?? (e.nativeEvent && e.nativeEvent.movementY) ?? 0;
-    setDragFS((d) => ({ x: d.x + mvX, y: d.y + mvY }));
+    e.preventDefault();
+
+    const deltaX = e.clientX - lastMouseRef.current.x;
+    const deltaY = e.clientY - lastMouseRef.current.y;
+
+    lastMouseRef.current = { x: e.clientX, y: e.clientY };
+
+    setDragFS((prev) => ({
+      x: prev.x + deltaX,
+      y: prev.y + deltaY,
+    }));
   };
 
-  // Swipe left/right (mobile) for fullscreen
+  // Reset drag on mouse leave
+  const onMouseLeave = () => {
+    draggingRef.current = false;
+  };
+
+  // Swipe handlers (disabled when zoomed in to allow panning)
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => {
-      if (fullscreenOpen) nextPage();
+      if (fullscreenOpen && zoomFS === 1) nextPage();
     },
     onSwipedRight: () => {
-      if (fullscreenOpen) prevPage();
+      if (fullscreenOpen && zoomFS === 1) prevPage();
     },
     trackMouse: true,
+    preventScrollOnSwipe: true,
   });
   
-  // Keyboard navigation inside fullscreen
   useEffect(() => {
     if (!fullscreenOpen) return;
     const handler = (e) => {
@@ -158,7 +163,6 @@ const ResumeViewer = ({ socialLinks }) => {
     return () => window.removeEventListener("keydown", handler);
   }, [fullscreenOpen, pages.length]);
 
-  // Download PDF
   const handleDownload = async () => {
     const url = socialLinks?.resumeLink;
     if (!url) return;
@@ -174,7 +178,6 @@ const ResumeViewer = ({ socialLinks }) => {
     URL.revokeObjectURL(downloadUrl);
   };
 
-  // File Meta loader
   const formatFileSize = (bytes) => {
     if (!bytes) return "Unknown";
     const kb = bytes / 1024;
@@ -208,7 +211,6 @@ const ResumeViewer = ({ socialLinks }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pages.length]);
 
-  // --- Styles for overlay arrows (used in preview) ---
   const overlayArrowStyle = {
     position: "absolute",
     top: "50%",
@@ -226,314 +228,328 @@ const ResumeViewer = ({ socialLinks }) => {
         whileInView={{ opacity: 1, y: 0, transition: { duration: 0.6 } }}
         viewport={{ once: true }}
       >
-        <Grid container spacing={6} sx={{ width: "95%", p: 1 }}>
-          <Grid item xs={12}>
-            <Paper
-              elevation={0}
-              sx={{
-                borderRadius: 3,
-                overflow: "hidden",
-                background: isDark
-                  ? alpha(theme.palette.background.paper, 0.94)
-                  : theme.palette.background.paper,
-                border: `1px solid ${alpha(theme.palette.primary.main, 0.18)}`,
-                boxShadow: `0 12px 36px ${alpha(theme.palette.primary.main, 0.25)}`,
-              }}
-            >
-              {/* TOP TOOLBAR */}
-              <AppBar
-                position="static"
+        <Box sx={{ maxWidth: "xl", mx: "auto", width: "95%", px: { xs: 1, sm: 3, md: 4 } }}>
+          <Grid container spacing={6} justifyContent="center">
+            <Grid item xs={12}>
+              <Paper
                 elevation={0}
                 sx={{
-                  height: 58,
-                  display: "flex",
-                  justifyContent: "center",
-                  borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.25)}`,
+                  borderRadius: 3,
+                  overflow: "hidden",
                   background: isDark
-                    ? `linear-gradient(90deg, #0f172a, #1e293b)`
-                    : `linear-gradient(90deg, #ffffff, #f8fafc)`,
+                    ? alpha(theme.palette.background.paper, 0.94)
+                    : theme.palette.background.paper,
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.18)}`,
+                  boxShadow: `0 12px 36px ${alpha(theme.palette.primary.main, 0.25)}`,
                 }}
               >
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  px={4}
+                <AppBar
+                  position="static"
+                  elevation={0}
+                  sx={{
+                    height: { xs: "auto", sm: 58 },
+                    py: { xs: 1, sm: 0 },
+                    display: "flex",
+                    justifyContent: "center",
+                    borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.25)}`,
+                    background: isDark
+                      ? `linear-gradient(90deg, #0f172a, #1e293b)`
+                      : `linear-gradient(90deg, #ffffff, #f8fafc)`,
+                  }}
                 >
-                  {/* Tabs */}
-                  <Tabs
-                    value={activeTab}
-                    onChange={(e, v) => setActiveTab(v)}
-                    textColor="inherit"
-                    indicatorColor="secondary"
-                    sx={{
-                      minHeight: 40,
-                      "& .MuiTabs-flexContainer": { gap: 0.5 },
-                      "& .MuiTabs-indicator": { display: "none" }, // remove underline
-                      "& .MuiTab-root": {
-                        minHeight: 40,
-                        paddingInline: 8,
-                        borderRadius: 2,
-                        fontWeight: 700,
-                        textTransform: "none",
-                        color: isDark ? "#cbd5e1" : "#334155",
-                      },
-                      "& .Mui-selected": {
-                        backgroundColor: isDark
-                          ? alpha(theme.palette.primary.main, 0.25)
-                          : alpha(theme.palette.primary.main, 0.15),
-                        color: isDark ? "#fff" : theme.palette.primary.main,
-                      },
-                    }}
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    px={2}
+                    flexWrap="wrap"
+                    gap={1}
                   >
-                    <Tab icon={<Eye size={16} />} iconPosition="start" label="Preview" />
-                    <Tab label="Details" />
-                  </Tabs>
-
-                  {/* Action Buttons */}
-                  <Box display="flex" gap={1.5}>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      onClick={handleDownload}
+                    <Tabs
+                      value={activeTab}
+                      onChange={(e, v) => setActiveTab(v)}
+                      textColor="inherit"
+                      indicatorColor="secondary"
                       sx={{
-                        px: 1.8,
-                        py: 0.7,
-                        borderRadius: 2,
-                        fontWeight: 700,
-                        fontSize: "0.8rem",
-                        background: isDark
-                          ? alpha(theme.palette.primary.light, 0.15)
-                          : theme.palette.primary.main,
-                        color: isDark ? "#e2e8f0" : "#fff",
-                        "&:hover": {
-                          background: isDark
-                            ? alpha(theme.palette.primary.light, 0.25)
-                            : theme.palette.primary.dark,
+                        minHeight: 40,
+                        "& .MuiTabs-flexContainer": { gap: 0.5 },
+                        "& .MuiTabs-indicator": { display: "none" },
+                        "& .MuiTab-root": {
+                          minHeight: 40,
+                          paddingInline: { xs: 1, sm: 2 },
+                          borderRadius: 2,
+                          fontWeight: 700,
+                          textTransform: "none",
+                          fontSize: { xs: "0.8rem", sm: "0.875rem" },
+                          color: isDark ? "#cbd5e1" : "#334155",
+                        },
+                        "& .Mui-selected": {
+                          backgroundColor: isDark
+                            ? alpha(theme.palette.primary.main, 0.25)
+                            : alpha(theme.palette.primary.main, 0.15),
+                          color: isDark ? "#fff" : theme.palette.primary.main,
                         },
                       }}
                     >
-                      <Download size={15} style={{ marginRight: 6 }} />
-                      Download
-                    </Button>
-                  </Box>
-                </Box>
-              </AppBar>
+                      <Tab icon={<Eye size={16} />} iconPosition="start" label="Preview" />
+                      <Tab label="Details" />
+                    </Tabs>
 
-              {/* PREVIEW MODE */}
-              {activeTab === 0 && (
-                <Box>
-                  {/* Flex container WITHOUT divider line */}
-                  <Box
-                    display="flex"
-                    justifyContent="flex-end"
-                    alignItems="center"
-                    
-                  />
-
-                  {/* PDF Display */}
-                  <Paper
-                    sx={{
-                      height: 600,
-                      overflow: "auto",
-                      background: viewerBg,
-                      borderRadius: 2,
-                      position: "relative",
-                    }}
-                  >
-                    <Box display="flex" justifyContent="center" p={4} position="relative">
-                      {pages.length === 0 ? (
-                        /* Skeleton Loader */
-                        <Box
-                          sx={{
-                            width: "100%",
-                            maxWidth: 800,
-                            height: 500,
-                            mx: "auto",
-                          }}
-                        >
-                          <Skeleton
-                            variant="rectangular"
-                            width="100%"
-                            height="100%"
-                            sx={{ borderRadius: 2 }}
-                          />
-                        </Box>
-                      ) : (
-                        <Box sx={{ position: "relative", width: "100%", maxWidth: 1000 }}>
-                          {/* Expand Icon (TOP RIGHT) */}
-                          <IconButton
-                            onClick={openFullscreen}
-                            size="small"
-                            sx={{
-                              position: "absolute",
-                              top: 12,
-                              right: 12,
-                              bgcolor: "rgba(0,0,0,0.4)",
-                              color: "white",
-                              "&:hover": { bgcolor: "rgba(0,0,0,0.6)" },
-                              zIndex: 10,
-                            }}
-                          >
-                            <Maximize2 size={18} />
-                          </IconButton>
-
-                          {/* Resume Page */}
-                          <Box
-                            component="img"
-                            src={pages[currentPage]}
-                            alt="resume-page"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openFullscreen();
-                            }}
-                            sx={{
-                              width: "100%",
-                              borderRadius: "8px",
-                              userSelect: "none",
-                              cursor: "zoom-in",
-                              display: "block",
-                            }}
-                          />
-
-                          {/* Navigation Arrows */}
-                          {pages.length > 1 && (
-                            <>
-                              <IconButton
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  prevPage();
-                                }}
-                                sx={{ ...overlayArrowStyle, left: 10 }}
-                              >
-                                <ArrowBackIosNewIcon />
-                              </IconButton>
-
-                              <IconButton
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  nextPage();
-                                }}
-                                sx={{ ...overlayArrowStyle, right: 10 }}
-                              >
-                                <ArrowForwardIosIcon />
-                              </IconButton>
-                            </>
-                          )}
-
-                          {/* Page Counter */}
-                          <Box
-                            sx={{
-                              position: "absolute",
-                              bottom: 8,
-                              right: 12,
-                              bgcolor: alpha(theme.palette.background.paper, 0.7),
-                              px: 1.2,
-                              py: 0.4,
-                              borderRadius: 1,
-                            }}
-                          >
-                            <Typography variant="caption" fontWeight={700}>
-                              {currentPage + 1} / {pages.length}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      )}
-                    </Box>
-                  </Paper>
-                </Box>
-              )}
-
-              {/* DETAILS MODE */}
-              {activeTab === 1 && (
-                <Box p={4}>
-                  <Grid container spacing={4}>
-                    <Grid item xs={12} md={6}>
-                      <Card
+                    <Box display="flex" gap={1.5}>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        onClick={handleDownload}
                         sx={{
-                          borderRadius: 3,
-                          background: isDark ? "#020617" : "#F8FAFC",
-                          border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+                          px: 1.8,
+                          py: 0.7,
+                          borderRadius: 2,
+                          fontWeight: 700,
+                          fontSize: "0.8rem",
+                          background: isDark
+                            ? alpha(theme.palette.primary.light, 0.15)
+                            : theme.palette.primary.main,
+                          color: isDark ? "#e2e8f0" : "#fff",
+                          "&:hover": {
+                            background: isDark
+                              ? alpha(theme.palette.primary.light, 0.25)
+                              : theme.palette.primary.dark,
+                          },
                         }}
                       >
-                        <CardContent>
-                          <Typography fontWeight={700} mb={2}>
-                            Document Information
-                          </Typography>
+                        <Download size={15} style={{ marginRight: 6 }} />
+                        Download
+                      </Button>
+                    </Box>
+                  </Box>
+                </AppBar>
 
-                          <Box display="flex" justifyContent="space-between" my={1}>
-                            <Typography color="text.secondary">File Name:</Typography>
-                            <Typography fontWeight={700}>{docInfo.fileName}</Typography>
+                {/* PREVIEW MODE */}
+                {activeTab === 0 && (
+                  <Box>
+                    <Paper
+                      sx={{
+                        height: { xs: 400, sm: 600 },
+                        overflow: "hidden",
+                        background: viewerBg,
+                        borderRadius: 2,
+                        position: "relative",
+                        display: 'flex',
+                        alignItems: 'center',
+                        pt: 3,
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Box 
+                        display="flex" 
+                        justifyContent="center" 
+                        p={{ xs: 1, sm: 4 }}
+                        position="relative" 
+                        width="100%" 
+                        height="100%"
+                      >
+                        {pages.length === 0 ? (
+                          <Box
+                            sx={{
+                              width: "100%",
+                              maxWidth: 800,
+                              height: "100%",
+                              mx: "auto",
+                            }}
+                          >
+                            <Skeleton
+                              variant="rectangular"
+                              width="100%"
+                              height="100%"
+                              sx={{ borderRadius: 2 }}
+                            />
                           </Box>
+                        ) : (
+                          <Box 
+                            sx={{ 
+                              position: "relative", 
+                              width: "100%", 
+                              maxWidth: 1000, 
+                              height: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center"
+                            }}
+                          >
+                            <IconButton
+                              onClick={openFullscreen}
+                              size="small"
+                              sx={{
+                                position: "absolute",
+                                top: { xs: 8, sm: 12 },
+                                right: { xs: 8, sm: 12 },
+                                bgcolor: "rgba(0,0,0,0.4)",
+                                color: "white",
+                                "&:hover": { bgcolor: "rgba(0,0,0,0.6)" },
+                                zIndex: 10,
+                              }}
+                            >
+                              <Maximize2 size={18} />
+                            </IconButton>
 
-                          <Box display="flex" justifyContent="space-between" my={1}>
-                            <Typography color="text.secondary">File Size:</Typography>
-                            <Typography fontWeight={700}>{docInfo.fileSize}</Typography>
-                          </Box>
+                            <Box
+                              component="img"
+                              src={pages[currentPage]}
+                              alt="resume-page"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openFullscreen();
+                              }}
+                              sx={{
+                                maxWidth: "100%",
+                                maxHeight: "100%",
+                                width: "auto",
+                                height: "auto",
+                                objectFit: "contain",
+                                borderRadius: "8px",
+                                userSelect: "none",
+                                cursor: "zoom-in",
+                                display: "block",
+                                boxShadow: 3
+                              }}
+                            />
 
-                          <Box display="flex" justifyContent="space-between" my={1}>
-                            <Typography color="text.secondary">Last Updated:</Typography>
-                            <Typography fontWeight={700}>{docInfo.updatedAt}</Typography>
-                          </Box>
+                            {pages.length > 1 && (
+                              <>
+                                <IconButton
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    prevPage();
+                                  }}
+                                  sx={{ ...overlayArrowStyle, left: 10 }}
+                                >
+                                  <ArrowBackIosNewIcon />
+                                </IconButton>
 
-                          <Box display="flex" justifyContent="space-between" my={1}>
-                            <Typography color="text.secondary">Pages:</Typography>
-                            <Typography fontWeight={700}>{docInfo.pages}</Typography>
+                                <IconButton
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    nextPage();
+                                  }}
+                                  sx={{ ...overlayArrowStyle, right: 10 }}
+                                >
+                                  <ArrowForwardIosIcon />
+                                </IconButton>
+                              </>
+                            )}
+
+                            <Box
+                              sx={{
+                                position: "absolute",
+                                bottom: 8,
+                                right: 12,
+                                bgcolor: alpha(theme.palette.background.paper, 0.7),
+                                px: 1.2,
+                                py: 0.4,
+                                borderRadius: 1,
+                              }}
+                            >
+                              <Typography variant="caption" fontWeight={700}>
+                                {currentPage + 1} / {pages.length}
+                              </Typography>
+                            </Box>
                           </Box>
-                        </CardContent>
-                      </Card>
+                        )}
+                      </Box>
+                    </Paper>
+                  </Box>
+                )}
+
+                {activeTab === 1 && (
+                  <Box p={4}>
+                    <Grid container spacing={4} justifyContent="center">
+                      <Grid item xs={12} md={6}>
+                        <Card
+                          sx={{
+                            borderRadius: 3,
+                            background: isDark ? "#020617" : "#F8FAFC",
+                            border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+                          }}
+                        >
+                          <CardContent>
+                            <Typography fontWeight={700} mb={2}>
+                              Document Information
+                            </Typography>
+                            <Box display="flex" justifyContent="space-between" my={1}>
+                              <Typography color="text.secondary">File Name:</Typography>
+                              <Typography fontWeight={700} noWrap sx={{ maxWidth: "60%" }}>{docInfo.fileName}</Typography>
+                            </Box>
+                            <Box display="flex" justifyContent="space-between" my={1}>
+                              <Typography color="text.secondary">File Size:</Typography>
+                              <Typography fontWeight={700}>{socialLinks?.rsSize || docInfo.fileSize}</Typography>
+                            </Box>
+                            <Box display="flex" justifyContent="space-between" my={1}>
+                              <Typography color="text.secondary">Last Updated:</Typography>
+                              <Typography fontWeight={700}>{docInfo.updatedAt}</Typography>
+                            </Box>
+                            <Box display="flex" justifyContent="space-between" my={1}>
+                              <Typography color="text.secondary">Pages:</Typography>
+                              <Typography fontWeight={700}>{docInfo.pages}</Typography>
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Box>
-              )}
-            </Paper>
+                  </Box>
+                )}
+              </Paper>
+            </Grid>
           </Grid>
-        </Grid>
+        </Box>
 
         {/* FULLSCREEN MODAL VIEWER */}
         <Modal
           open={fullscreenOpen}
-          onClose={() => {
-            closeFullscreen();
-          }}
+          onClose={closeFullscreen}
         >
           <Box
             {...swipeHandlers}
             sx={{
               position: "fixed",
               inset: 0,
-              bgcolor: isDark ? "rgba(0,0,0,0.92)" : "rgba(0,0,0,0.88)",
+              bgcolor: isDark ? "rgba(0,0,0,0.95)" : "rgba(0,0,0,0.9)",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              p: 2,
+              overflow: "hidden", // Prevent body scroll
+              cursor: zoomFS > 1 ? "grab" : "default",
             }}
             onMouseDown={onMouseDown}
             onMouseUp={onMouseUp}
             onMouseMove={onMouseMove}
-            // prevent clicks on background from triggering zoom toggle
-            onClick={(e) => {
-              // clicking on background closes (handled by Modal)
-            }}
+            onMouseLeave={onMouseLeave}
           >
-            {/* Fullscreen image: click -> step zoom; double click -> reset */}
+            {/* Fullscreen image */}
             <Box
               component="img"
               src={pages[currentPage]}
               alt={`resume-page-full-${currentPage}`}
-              
+              onClick={stepZoom} // Single click to zoom
+              onDoubleClick={resetZoomFS} // Double click reset
+              draggable={false} // Native drag disable
               sx={{
-                maxWidth: zoomFS === 1 ? "90%" : "none",
-                maxHeight: zoomFS === 1 ? "90%" : "none",
+                // IMPORTANT: When zoomed, allow image to exceed container size
+                maxWidth: zoomFS === 1 ? "100%" : "none",
+                maxHeight: zoomFS === 1 ? "100%" : "none",
+                height: zoomFS === 1 ? "auto" : "none",
+                width: zoomFS === 1 ? "auto" : "none",
+                
+                objectFit: "contain",
                 transform: `scale(${zoomFS}) translate(${dragFS.x}px, ${dragFS.y}px)`,
-                transition: "transform 0.18s ease",
+                // Use CSS transition only for scale, NOT drag (makes drag laggy)
+                transition: draggingRef.current ? "none" : "transform 0.2s ease-out",
                 userSelect: "none",
+                cursor: zoomFS > 1 ? (draggingRef.current ? "grabbing" : "grab") : "zoom-in",
                 borderRadius: 2,
                 boxShadow: 4,
               }}
             />
 
-            {/* CLOSE BUTTON */}
             <IconButton
               onClick={(e) => {
                 e.stopPropagation();
@@ -546,18 +562,17 @@ const ResumeViewer = ({ socialLinks }) => {
                 bgcolor: "rgba(0,0,0,0.6)",
                 color: "white",
                 "&:hover": { bgcolor: "rgba(0,0,0,0.9)" },
+                zIndex: 20
               }}
             >
               <X size={22} />
             </IconButton>
 
-            {/* PREVIOUS PAGE (fullscreen) */}
-            {currentPage > 0 && (
+            {currentPage > 0 && zoomFS === 1 && (
               <IconButton
                 onClick={(e) => {
                   e.stopPropagation();
                   prevPage();
-                  resetZoomFS();
                 }}
                 sx={{
                   position: "fixed",
@@ -567,19 +582,18 @@ const ResumeViewer = ({ socialLinks }) => {
                   bgcolor: "rgba(0,0,0,0.6)",
                   color: "white",
                   "&:hover": { bgcolor: "rgba(0,0,0,0.85)" },
+                  zIndex: 20
                 }}
               >
                 <ArrowBackIosNewIcon />
               </IconButton>
             )}
 
-            {/* NEXT PAGE (fullscreen) */}
-            {currentPage < pages.length - 1 && (
+            {currentPage < pages.length - 1 && zoomFS === 1 && (
               <IconButton
                 onClick={(e) => {
                   e.stopPropagation();
                   nextPage();
-                  resetZoomFS();
                 }}
                 sx={{
                   position: "fixed",
@@ -589,6 +603,7 @@ const ResumeViewer = ({ socialLinks }) => {
                   bgcolor: "rgba(0,0,0,0.6)",
                   color: "white",
                   "&:hover": { bgcolor: "rgba(0,0,0,0.85)" },
+                  zIndex: 20
                 }}
               >
                 <ArrowForwardIosIcon />
@@ -598,7 +613,6 @@ const ResumeViewer = ({ socialLinks }) => {
         </Modal>
       </motion.div>
     </section>
-
   );
 };
 

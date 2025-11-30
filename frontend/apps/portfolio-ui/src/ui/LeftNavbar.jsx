@@ -5,10 +5,11 @@ import {
   Stack,
   Divider,
   useTheme,
+  Skeleton
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import PersonIcon from "@mui/icons-material/Person";
 import PsychologyIcon from "@mui/icons-material/Psychology";
@@ -59,9 +60,7 @@ export default function LeftNavbar({ onNavigate = () => {} }) {
   const darkProfileImg = "https://works-stuffs.s3.ap-southeast-2.amazonaws.com/ProfileImg.png";
 
   const profileImage = isDark ? darkProfileImg : lightProfileImg;
-
-  // Hide navbar on small screens
-  /* if (isSmallScreen) return null; */
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const navItemStyle = useMemo(
     () => ({
@@ -101,29 +100,49 @@ export default function LeftNavbar({ onNavigate = () => {} }) {
       >
         {/* Profile */}
         <motion.div variants={itemVariants}>
-          <Avatar
-            src={profileImage}
-            alt="Vignesh P"
-            imgProps={{
-              style: {
-                objectFit: "cover",
-                transform: "scale(1.15)",
-              },
-            }}
-            sx={{
-              width: 100,
-              height: 100,
-              mb: 2,
-              border: `2px solid ${theme.palette.primary.main}`,
-              overflow: "hidden",
-              transition: "all 0.3s ease",
-              boxShadow: `0 0 12px ${theme.palette.primary.main}55`,
-              "&:hover": {
-                transform: "scale(1.20)",
-                boxShadow: `0 0 18px ${theme.palette.primary.main}88`,
-              },
-            }}
-          />
+          <Box sx={{ display: "flex", justifyContent: "center", mb: 2, mx: "auto", position: "relative" }}>       
+            {/* Skeleton Loader - Visible while loading */}
+            {!imgLoaded && (
+              <Skeleton 
+                variant="circular" 
+                width={100} 
+                height={100} 
+                sx={{ 
+                  position: "absolute", // Position over the avatar space
+                  zIndex: 1 
+                }} 
+              />
+            )}
+
+            <Avatar
+              src={profileImage}
+              alt="Vignesh P"
+              imgProps={{
+                onLoad: () => setImgLoaded(true), // Trigger when image is ready
+                style: {
+                  objectFit: "cover",
+                  transform: "scale(1.15)",
+                  // Optional: Fade in effect
+                  opacity: imgLoaded ? 1 : 0, 
+                  transition: "opacity 0.3s ease" 
+                },
+              }}
+              sx={{
+                width: 100,
+                height: 100,
+                border: `2px solid ${theme.palette.primary.main}`,
+                overflow: "hidden",
+                transition: "all 0.3s ease",
+                boxShadow: `0 0 12px ${theme.palette.primary.main}55`,
+                // Hide background color if image has transparency to avoid visual glitch during load
+                bgcolor: 'transparent', 
+                "&:hover": {
+                  transform: "scale(1.20)",
+                  boxShadow: `0 0 18px ${theme.palette.primary.main}88`,
+                },
+              }}
+            />
+          </Box>
         </motion.div>
 
         <motion.div variants={itemVariants}>

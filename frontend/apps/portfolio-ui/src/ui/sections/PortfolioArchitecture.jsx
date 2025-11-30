@@ -25,6 +25,7 @@ import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { motion } from "framer-motion";
 import { getSkillIcon } from "../../util/skillIcons.js";
 
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -32,6 +33,7 @@ const containerVariants = {
     transition: { staggerChildren: 0.1, delayChildren: 0.1 },
   },
 };
+
 
 const itemVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -42,6 +44,7 @@ const itemVariants = {
   },
 };
 
+
 const cardHoverVariants = {
   rest: { scale: 1, y: 0 },
   hover: { 
@@ -50,6 +53,7 @@ const cardHoverVariants = {
     transition: { duration: 0.3, ease: "easeOut" } 
   },
 };
+
 
 const defaultTech = [
   "ReactJS",
@@ -62,6 +66,7 @@ const defaultTech = [
   "AWS SES",
   "AWS Route53",
 ];
+
 
 const FeatureCard = ({ icon, title, items = [], theme, isDark, color }) => (
   <motion.div variants={itemVariants} style={{ height: "100%" }}>
@@ -129,6 +134,7 @@ const FeatureCard = ({ icon, title, items = [], theme, isDark, color }) => (
           </Typography>
         </Stack>
 
+
         <Stack spacing={1.5}>
           {items.map((item, i) => (
             <Stack key={i} direction="row" spacing={1.5} alignItems="flex-start">
@@ -138,7 +144,7 @@ const FeatureCard = ({ icon, title, items = [], theme, isDark, color }) => (
                   height: 6,
                   borderRadius: "50%",
                   bgcolor: color,
-                  transform: "translateY(8px)",
+                  transform: "translateY(9px)",
                   flexShrink: 0,
                 }}
               />
@@ -157,9 +163,11 @@ const FeatureCard = ({ icon, title, items = [], theme, isDark, color }) => (
   </motion.div>
 );
 
+
 const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+
 
   return (
     <Box
@@ -167,16 +175,18 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
       sx={{
         position: "relative",
         overflow: "hidden",
-        pt: 2
+        pt: 0
       }}
     >
-      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1, px: { xs: 2, sm: 3, md: 4 } }}>
+      {/* CHANGED: Removed Container wrapper and used Box with maxWidth="xl" for consistency */}
+      <Box sx={{ maxWidth: "xl", mx: "auto", px: { xs: 2, sm: 3, md: 4 }, position: "relative", zIndex: 1 }}>
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-        >
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            // Changed amount to 0.1 and added margin to trigger earlier on mobile
+            viewport={{ once: true, amount: 0.1, margin: "0px 0px -50px 0px" }} 
+          >
           {/* Header Section */}
             <motion.div variants={itemVariants}>
             <Box sx={{ textAlign: "center", mb: { xs: 5, md: 7 } }}>
@@ -222,8 +232,10 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
             </Box>
           </motion.div>
 
+
           {/* Feature Cards Grid */}
-          <Grid container spacing={3} sx={{ mb: 4 }}>
+          {/* CHANGED: Added justifyContent="center" for better layout on large screens */}
+          <Grid container spacing={3} sx={{ mb: 4 }} justifyContent="center">
             <Grid item xs={12} md={4}>
               <FeatureCard
                 theme={theme}
@@ -241,6 +253,7 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
               />
             </Grid>
 
+
             <Grid item xs={12} md={4}>
               <FeatureCard
                 theme={theme}
@@ -255,6 +268,7 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
                 ]}
               />
             </Grid>
+
 
             <Grid item xs={12} md={4}>
               <FeatureCard
@@ -274,8 +288,10 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
             </Grid>
           </Grid>
 
+
           {/* Architecture Details */}
-          <Grid container spacing={3} sx={{ mb: 4 }}>
+          {/* CHANGED: Added justifyContent="center" */}
+          <Grid container spacing={3} sx={{ mb: 4 }} justifyContent="center">
             <Grid item xs={12} md={7}>
               <motion.div variants={itemVariants}>
                 <Paper
@@ -308,6 +324,7 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
                     </Typography>
                   </Stack>
 
+
                   <Typography 
                     variant="body1" 
                     color="text.secondary" 
@@ -319,7 +336,9 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
                     storage. All components communicate through secure REST endpoints.
                   </Typography>
 
+
                   <Divider sx={{ my: 2 }} />
+
 
                   <Grid container spacing={2.5}>
                     <Grid item xs={12} sm={6}>
@@ -357,6 +376,7 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
               </motion.div>
             </Grid>
 
+
             <Grid item xs={12} md={5}>
               <motion.div variants={itemVariants}>
                 <Paper
@@ -389,6 +409,7 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
                     </Typography>
                   </Stack>
 
+
                   <Stack spacing={2}>
                     {[
                       "HTTPS enforced with ACM SSL certificates",
@@ -403,7 +424,7 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
                           sx={{ 
                             fontSize: 16, 
                             color: theme.palette.warning.main,
-                            mt: 0.3,
+                            pt: 0.4,
                             flexShrink: 0,
                           }} 
                         />
@@ -417,6 +438,7 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
               </motion.div>
             </Grid>
           </Grid>
+
 
           {/* Tech Stack */}
           <motion.div variants={itemVariants}>
@@ -458,6 +480,7 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
                 </Typography>
               </Stack>
 
+
               <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
                 {defaultTech.map((tech, i) => (
                   <Chip
@@ -498,9 +521,10 @@ const PortfolioArchitecture = ({ portfolioInfo = {} }) => {
             </Paper>
           </motion.div>
         </motion.div>
-      </Container>
+      </Box>
     </Box>
   );
 };
+
 
 export default PortfolioArchitecture;
