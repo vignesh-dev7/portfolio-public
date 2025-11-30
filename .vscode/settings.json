@@ -1,7 +1,0 @@
-{
-  "search.exclude": {
-    "**/.yarn": true,
-    "**/.pnp.*": true
-  },
-  "postman.settings.dotenv-detection-notification-visibility": false
-}
