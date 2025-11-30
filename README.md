@@ -60,7 +60,7 @@ https://vigneshp.co.in
 If you want access to the private full version or want to collaborate:
 
 📧 **vigneshzdev@gmail.com**  
-🔗 **LinkedIn:** https://linkedin.com/in/vigneshp-dev
+🔗 **LinkedIn:** https://www.linkedin.com/in/vignesh-dev7
 
 ---
 
